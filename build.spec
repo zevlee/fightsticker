@@ -14,7 +14,7 @@ a = Analysis(
     datas=[
         ('LICENSE', '.'),
         ('theme', 'theme'),
-        ('logo/me.zevlee.Fightsticker.png','logo/me.zevlee.Fightsticker.png')
+        ('logo/me.zevlee.Fightsticker.png','logo')
     ],
     hiddenimports=[],
     hookspath=[],
