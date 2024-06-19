@@ -9,6 +9,7 @@ class Application(Tk):
         self.title(title)
 
     def do_startup(self):
+        self.resizable(False, False)
         self.window = Window(self)
 
     def do_activate(self):
