@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>me.zevlee.Fightsticker</id>
+  
+  <name>Fightsticker</name>
+  <summary>A simple program written in python to display fightstick inputs.</summary>
+  
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  
+  <description>
+    <p>
+      A simple program written in python to display fightstick inputs.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">me.zevlee.Fightsticker.desktop</launchable>
+  <url type="homepage">https://github.com/zevlee/FightstickDisplay/</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://publicdomainvectors.org/photos/kawaii_earth.png</image>
+    </screenshot>
+  </screenshots>
+</component>
