@@ -383,7 +383,7 @@ class SceneManager:
 def main():
     # Create the main window. Use configParser to set a static controller status of unplugged.
     window = pyglet.window.Window(
-        640, 390, caption="Fightstick Display", resizable=True, vsync=False
+        640, 390, caption="Fightsticker", resizable=True, vsync=False
     )
     window.set_icon(pyglet.resource.image("icon.png"))
     

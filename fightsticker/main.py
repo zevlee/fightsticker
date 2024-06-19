@@ -2,5 +2,5 @@ from .application import Application
 
 
 def main():
-    app = Application(title="Fightstick Display")
+    app = Application(title="Fightsticker")
     return app.run()
