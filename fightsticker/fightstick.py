@@ -112,8 +112,11 @@ def load_configuration():
 
 
 def save_configuration():
-    with pyglet.resource.file('layout.ini', 'w') as file:
-        config.write(file)
+    try:
+        with pyglet.resource.file('layout.ini', 'w') as file:
+            config.write(file)
+    except OSError:
+        pass
 
 
 #########################
