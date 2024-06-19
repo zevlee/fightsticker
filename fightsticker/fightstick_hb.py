@@ -16,7 +16,7 @@ _debug_print = debug_print(_debug_flag)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
-pyglet.resource.path.append(os.path.join(APPDIR, "theme"))
+pyglet.resource.path.append("theme")
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -29,18 +29,20 @@ _debug_print("Main window created")
 
 # Parse and add additional SDL style controller mappings.
 url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt"
+gamecontrollerdb = os.path.join(APPDIR, "gamecontrollerdb.txt")
 try:
     with urllib.request.urlopen(url) as response, open(
-        os.path.join(APPDIR, "gamecontrollerdb.txt"), "wb"
+        gamecontrollerdb, "wb"
     ) as f:
         f.write(response.read())
 except Exception:
-    if os.path.exists("gamecontrollerdb.txt"):
+    if os.path.exists(gamecontrollerdb):
         try:
-            pyglet.input.controller.add_mappings_from_file("gamecontrollerdb.txt")
+            pyglet.input.controller.add_mappings_from_file(gamecontrollerdb)
             _debug_print(
                 "Added additional controller mappings from 'gamecontrollerdb.txt'"
             )
+            os.remove(gamecontrollerdb)
         except Exception as e:
             _debug_print(
                 f"Failed to load 'gamecontrollerdb.txt'. Please open an issue on GitHub. \n --> {e}"
@@ -49,34 +51,40 @@ except Exception:
 # Set the (x,y) parameters for where certain elements should be displayed.
 _layout = {
     "background": (0, 0),
-    "stick": (119, 154),
     "select": (50, 318),
     "start": (50, 318),
-    "a": (256, 83),
-    "b": (336, 113),
-    "rt": (421, 112),
-    "lt": (507, 109),
-    "x": (275, 173),
-    "y": (354, 203),
-    "rb": (440, 202),
-    "lb": (527, 199),
+    "up": (237, 10),
+    "down": (133, 217),
+    "left": (47, 217),
+    "right": (209, 176),
+    "a": (284, 124),
+    "b": (364, 158),
+    "x": (290, 214),
+    "y": (369, 247),
+    "rb": (456, 246),
+    "lb": (543, 234),
+    "rt": (456, 159),
+    "lt": (540, 146),
 }
 _debug_print("Layout loaded.")
 
 # Connect the image file names to their definitions.
 _images = {
-    'background': 'background.png',
-    'stick': 'stick.png',
-    'select': 'select.png',
-    'start': 'start.png',
-    'x': 'button.png',
-    'y': 'button.png',
-    'lt': 'button.png',
-    'rt': 'button.png',
-    'a': 'button.png',
-    'b': 'button.png',
-    'lb': 'button.png',
-    'rb': 'button.png',
+    "background": "backgroundHB.png",
+    "select": "select.png",
+    "start": "start.png",
+    "up": "buttonhblg.png",
+    "down": "buttonhb.png",
+    "left": "buttonhb.png",
+    "right": "buttonhb.png",
+    "a": "buttonhb.png",
+    "b": "buttonhb.png",
+    "x": "buttonhb.png",
+    "y": "buttonhb.png",
+    "lt": "buttonhb.png",
+    "rt": "buttonhb.png",
+    "lb": "buttonhb.png",
+    "rb": "buttonhb.png",
 }
 _debug_print("Images loaded.")
 
@@ -87,11 +95,11 @@ def load_configuration():
     layout = _layout.copy()
     images = _images.copy()
 
-    with pyglet.resource.file('layout.ini', 'r') as file:
+    with pyglet.resource.file('layouthb.ini', 'r') as file:
         loaded_configs = config.read(file.name)
 
     if not loaded_configs:
-        _debug_print("No valid layout.ini found. Falling back to default.")
+        print("No valid layouthb.ini found. Falling back to default.")
         return
 
     try:
@@ -106,11 +114,11 @@ def load_configuration():
         _images = images.copy()
 
     except (KeyError, ParsingError, NoSectionError):
-        _debug_print("Invalid theme/layout.ini. Falling back to default.")
+        print("Invalid theme/layouthb.ini. Falling back to default.")
 
 
 def save_configuration():
-    with pyglet.resource.file('layout.ini', 'w') as file:
+    with pyglet.resource.file('layouthb.ini', 'w') as file:
         config.write(file)
 
 
@@ -196,9 +204,12 @@ class MainScene(_BaseScene):
         self.fg = pyglet.graphics.Group(1)
         # Create all sprites using helper function (name, batch, group, visible).
         self.background = self._make_sprite('background', self.bg)
-        self.stick_spr = self._make_sprite('stick', self.fg)
         self.select_spr = self._make_sprite('select', self.fg, False)
         self.start_spr = self._make_sprite('start', self.fg, False)
+        self.up_spr = self._make_sprite("up", self.fg, False)
+        self.down_spr = self._make_sprite("down", self.fg, False)
+        self.left_spr = self._make_sprite("left", self.fg, False)
+        self.right_spr = self._make_sprite("right", self.fg, False)
         self.x_spr = self._make_sprite('x', self.fg, False)
         self.y_spr = self._make_sprite('y', self.fg, False)
         self.a_spr = self._make_sprite('a', self.fg, False)
@@ -235,37 +246,21 @@ class MainScene(_BaseScene):
         if pressed_button:
             pressed_button.visible = True
 
-    # Event to show a button when released.
+    # Event to hide the sprite when the button is released.
     def on_button_release(self, controller, button):
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
             pressed_button.visible = False
 
-    # Math to draw stick inputs in their correct location.
-    def on_stick_motion(self, controller, stick, xvalue, yvalue):
-        if stick == "leftstick":
-            center_x, center_y = _layout['stick']
-            if abs(xvalue) > self.manager.stick_deadzone:
-                center_x += (xvalue * 50)
-                assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
-            if abs(yvalue) > self.manager.stick_deadzone:
-                center_y += (yvalue * 50)
-                assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
-            self.stick_spr.position = center_x, center_y, 0
-
-    # Math to draw dpad inputs in their correct location.
+    # Have the dpad hats alert the main window to draw the sprites.
     def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
-        assert _debug_print(f"Dpad  Left:{dpleft}, Right:{dpright}, Up:{dpup}, Down:{dpdown}")
-        center_x, center_y = _layout["stick"]
-        if dpup:
-            center_y += 50
-        elif dpdown:
-            center_y -= 50
-        if dpleft:
-            center_x -= 50
-        elif dpright:
-            center_x += 50
-        self.stick_spr.position = center_x, center_y, 0
+        assert _debug_print(
+            f"Dpad  Left:{dpleft}, Right:{dpright}, Up:{dpup}, Down:{dpdown}"
+        )
+        self.up_spr.visible = bool(dpup)
+        self.down_spr.visible = bool(dpdown)
+        self.left_spr.visible = bool(dpleft)
+        self.right_spr.visible = bool(dpright)
 
     # Math to draw trigger inputs or hide them.
     def on_trigger_motion(self, controller, trigger, value):
@@ -391,7 +386,7 @@ def main():
         640, 390, caption="Fightstick Display", resizable=True, vsync=False
     )
     window.set_icon(pyglet.resource.image("icon.png"))
-
+    
     load_configuration()
 
     scene_manager = SceneManager(window_instance=window)
