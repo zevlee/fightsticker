@@ -15,10 +15,10 @@
   </description>
   
   <launchable type="desktop-id">me.zevlee.Fightsticker.desktop</launchable>
-  <url type="homepage">https://github.com/zevlee/FightstickDisplay/</url>
+  <url type="homepage">https://github.com/zevlee/fightsticker/</url>
   <screenshots>
     <screenshot type="default">
-      <image>https://publicdomainvectors.org/photos/kawaii_earth.png</image>
+      <image>https://github.com/zevlee/fightsticker/blob/main/theme/fightstick.gif</image>
     </screenshot>
   </screenshots>
 </component>
