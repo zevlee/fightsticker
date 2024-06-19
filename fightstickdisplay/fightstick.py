@@ -8,19 +8,19 @@ import pyglet
 from pyglet.util import debug_print
 from pyglet.math import Mat4, Vec3
 
+from . import APPDIR
+
 # Set up the debugging flag calls.
 _debug_flag = len(sys.argv) > 1 and sys.argv[1] in ('-D', '-d', '--debug')
 _debug_print = debug_print(_debug_flag)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
-pyglet.resource.path.append("theme")
+pyglet.resource.path.append(os.path.join(APPDIR, "theme"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
 # Create the main window. Use configParser to set a static controller status of unplugged.
-window = pyglet.window.Window(640, 390, caption="Fightstick Display", resizable=True, vsync=False)
-window.set_icon(pyglet.resource.image("icon.png"))
 config = ConfigParser()
 config.add_section('layout')
 config.add_section('images')
@@ -31,7 +31,7 @@ _debug_print("Main window created")
 url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt"
 try:
     with urllib.request.urlopen(url) as response, open(
-        os.path.dirname(__file__) + "/gamecontrollerdb.txt", "wb"
+        os.path.join(APPDIR, "gamecontrollerdb.txt"), "wb"
     ) as f:
         f.write(response.read())
 except Exception:
@@ -79,6 +79,7 @@ _images = {
     'rb': 'button.png',
 }
 _debug_print("Images loaded.")
+
 
 def load_configuration():
     # Load the button mapping configuration.
@@ -363,11 +364,11 @@ class SceneManager:
     def enforce_aspect_ratio(self, dt):
         # Enforce aspect ratio by readjusting the window height.
         aspect_ratio = 1.641025641
-        target_width = int(window.height * aspect_ratio)
-        target_height = int(window.width / aspect_ratio)
+        target_width = int(self.window.height * aspect_ratio)
+        target_height = int(self.window.width / aspect_ratio)
 
         if self.window.width != target_width and self.window.height != target_height:
-            self.window.set_size(window.width, target_height)
+            self.window.set_size(self.window.width, target_height)
 
     # Window Events:
 
@@ -384,7 +385,13 @@ class SceneManager:
         return pyglet.event.EVENT_HANDLED
 
 
-if __name__ == "__main__":
+def main():
+    # Create the main window. Use configParser to set a static controller status of unplugged.
+    window = pyglet.window.Window(
+        640, 390, caption="Fightstick Display", resizable=True, vsync=False
+    )
+    window.set_icon(pyglet.resource.image("icon.png"))
+
     load_configuration()
 
     scene_manager = SceneManager(window_instance=window)

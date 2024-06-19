@@ -1,0 +1,37 @@
+#This section can be edited to fix mis-mapped buttons, Usually only lb/rb and lt/rt need changes.
+[layout]
+background = 0, 0
+select = 50, 318
+start = 50, 318
+guide = 50, 318
+up = 237, 10
+down = 133, 217
+left = 47, 217
+right = 209, 176
+a = 284, 124
+b = 364, 158
+x = 290, 214
+y = 369, 247
+rb = 456, 246
+lb = 543, 234
+rt = 456, 159
+lt = 540, 146
+
+#Here you can set your own custom images.
+[images]
+background = backgroundHB.png
+select = select.png
+start = start.png
+guide = guide.png
+up = buttonhblg.png
+down = buttonhb.png
+left = buttonhb.png
+right = buttonhb.png
+x = buttonhb.png
+y = buttonhb.png
+lt = buttonhb.png
+rt = buttonhb.png
+a = buttonhb.png
+b = buttonhb.png
+lb = buttonhb.png
+rb = buttonhb.png
