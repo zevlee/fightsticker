@@ -31,22 +31,25 @@ _debug_print("Main window created")
 url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt"
 gamecontrollerdb = os.path.join(APPDIR, "gamecontrollerdb.txt")
 try:
+    if os.path.exists(gamecontrollerdb):
+        with open(gamecontrollerdb) as f:
+            old_gamecontrollerdb = f.read()
+    else:
+        old_gamecontrollerdb = ""
     with urllib.request.urlopen(url) as response, open(
         gamecontrollerdb, "wb"
     ) as f:
-        f.write(response.read())
+        if response.read() != old_gamecontrollerdb:
+            f.write(response.read())
+    pyglet.input.controller.add_mappings_from_file(gamecontrollerdb)
+    _debug_print(
+        "Added additional controller mappings from 'gamecontrollerdb.txt'"
+    )
+    os.remove(gamecontrollerdb)
 except Exception:
-    if os.path.exists(gamecontrollerdb):
-        try:
-            pyglet.input.controller.add_mappings_from_file(gamecontrollerdb)
-            _debug_print(
-                "Added additional controller mappings from 'gamecontrollerdb.txt'"
-            )
-            os.remove(gamecontrollerdb)
-        except Exception as e:
-            _debug_print(
-                f"Failed to load 'gamecontrollerdb.txt'. Please open an issue on GitHub. \n --> {e}"
-            )
+    _debug_print(
+        f"Failed to load 'gamecontrollerdb.txt'. Please open an issue on GitHub. \n --> {e}"
+    )
 
 # Set the (x,y) parameters for where certain elements should be displayed.
 _layout = {
