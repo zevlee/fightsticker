@@ -1,7 +1,10 @@
 from os.path import join
+from sys import argv
 from tkinter import *
 from tkinter import ttk
+
 from . import APPDIR, LAYOUTS
+from .arg_parser import ArgParser
 from .fightstick import main as main_traditional
 from .fightstick_hb import main as main_leverless
 
@@ -33,6 +36,15 @@ class Window(ttk.Frame):
         # Padding
         for child in self.winfo_children(): 
             child.grid_configure(padx=5, pady=5)
+        # Command line arguments
+        parser = ArgParser()
+        args = argv[1:]
+        option = parser.parse_args(args)
+        if option.TRADITIONAL:
+            main_traditional()
+        elif option.LEVERLESS:
+            main_leverless()
+        
     
     def _launch(self):
         match self.option_var.get():
