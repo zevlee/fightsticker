@@ -44,8 +44,7 @@ class Window(ttk.Frame):
             main_traditional()
         elif option.LEVERLESS:
             main_leverless()
-        
-    
+
     def _launch(self):
         match self.option_var.get():
             case "Traditional":
