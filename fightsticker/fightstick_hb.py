@@ -46,7 +46,7 @@ try:
         "Added additional controller mappings from 'gamecontrollerdb.txt'"
     )
     os.remove(gamecontrollerdb)
-except Exception:
+except Exception as e:
     _debug_print(
         f"Failed to load 'gamecontrollerdb.txt'. Please open an issue on GitHub. \n --> {e}"
     )
