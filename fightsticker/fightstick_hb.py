@@ -16,7 +16,7 @@ _debug_print = debug_print(_debug_flag)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
-pyglet.resource.path.append("theme")
+pyglet.resource.path.append(os.path.join(APPDIR, "theme"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -91,6 +91,8 @@ _images = {
 }
 _debug_print("Images loaded.")
 
+layout_file = "layouthb.ini"
+
 
 def load_configuration():
     # Load the button mapping configuration.
@@ -98,11 +100,11 @@ def load_configuration():
     layout = _layout.copy()
     images = _images.copy()
 
-    with pyglet.resource.file('layouthb.ini', 'r') as file:
+    with pyglet.resource.file(layout_file, "r") as file:
         loaded_configs = config.read(file.name)
 
     if not loaded_configs:
-        print("No valid layouthb.ini found. Falling back to default.")
+        _debug_print(f"No valid {layout_file} found. Falling back to default.")
         return
 
     try:
@@ -117,12 +119,12 @@ def load_configuration():
         _images = images.copy()
 
     except (KeyError, ParsingError, NoSectionError):
-        print("Invalid theme/layouthb.ini. Falling back to default.")
+        _debug_print(f"Invalid theme/{layout_file}. Falling back to default.")
 
 
 def save_configuration():
     try:
-        with pyglet.resource.file('layouthb.ini', 'w') as file:
+        with pyglet.resource.file(layout_file, "w") as file:
             config.write(file)
     except OSError:
         pass
