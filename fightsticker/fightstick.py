@@ -85,6 +85,8 @@ _images = {
 }
 _debug_print("Images loaded.")
 
+layout_file = "layout.ini"
+
 
 def load_configuration():
     # Load the button mapping configuration.
@@ -92,11 +94,11 @@ def load_configuration():
     layout = _layout.copy()
     images = _images.copy()
 
-    with pyglet.resource.file('layout.ini', 'r') as file:
+    with pyglet.resource.file(layout_file, "r") as file:
         loaded_configs = config.read(file.name)
 
     if not loaded_configs:
-        _debug_print("No valid layout.ini found. Falling back to default.")
+        _debug_print(f"No valid {layout_file} found. Falling back to default.")
         return
 
     try:
@@ -111,12 +113,12 @@ def load_configuration():
         _images = images.copy()
 
     except (KeyError, ParsingError, NoSectionError):
-        _debug_print("Invalid theme/layout.ini. Falling back to default.")
+        _debug_print(f"Invalid theme/{layout_file}. Falling back to default.")
 
 
 def save_configuration():
     try:
-        with pyglet.resource.file('layout.ini', 'w') as file:
+        with pyglet.resource.file(layout_file, "w") as file:
             config.write(file)
     except OSError:
         pass
@@ -204,9 +206,9 @@ class MainScene(_BaseScene):
         self.fg = pyglet.graphics.Group(1)
         # Create all sprites using helper function (name, batch, group, visible).
         self.background = self._make_sprite('background', self.bg)
-        self.stick_spr = self._make_sprite('stick', self.fg)
         self.select_spr = self._make_sprite('select', self.fg, False)
         self.start_spr = self._make_sprite('start', self.fg, False)
+        self.stick_spr = self._make_sprite('stick', self.fg)
         self.x_spr = self._make_sprite('x', self.fg, False)
         self.y_spr = self._make_sprite('y', self.fg, False)
         self.a_spr = self._make_sprite('a', self.fg, False)
@@ -243,7 +245,7 @@ class MainScene(_BaseScene):
         if pressed_button:
             pressed_button.visible = True
 
-    # Event to show a button when released.
+    # Event to hide the sprite when the button is released.
     def on_button_release(self, controller, button):
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
