@@ -1,7 +1,7 @@
-import os
-import sys
-import urllib.error
-import urllib.request
+from os import remove
+from os.path import exists, join
+from sys import argv
+from urllib.request import urlopen
 from configparser import ConfigParser, ParsingError, NoSectionError
 
 import pyglet
@@ -11,12 +11,12 @@ from pyglet.math import Mat4, Vec3
 from . import APPDIR
 
 # Set up the debugging flag calls.
-_debug_flag = len(sys.argv) > 1 and sys.argv[1] in ('-D', '-d', '--debug')
+_debug_flag = len(argv) > 1 and argv[1] in ('-D', '-d', '--debug')
 _debug_print = debug_print(_debug_flag)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
-pyglet.resource.path.append(os.path.join(APPDIR, "theme"))
+pyglet.resource.path.append(join(APPDIR, "theme"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -29,14 +29,14 @@ _debug_print("Main window created")
 
 # Parse and add additional SDL style controller mappings.
 url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt"
-gamecontrollerdb = os.path.join(APPDIR, "gamecontrollerdb.txt")
+gamecontrollerdb = join(APPDIR, "gamecontrollerdb.txt")
 try:
-    if os.path.exists(gamecontrollerdb):
+    if exists(gamecontrollerdb):
         with open(gamecontrollerdb) as f:
             old_gamecontrollerdb = f.read()
     else:
         old_gamecontrollerdb = ""
-    with urllib.request.urlopen(url) as response, open(
+    with urlopen(url) as response, open(
         gamecontrollerdb, "wb"
     ) as f:
         if response.read() != old_gamecontrollerdb:
@@ -45,7 +45,7 @@ try:
     _debug_print(
         "Added additional controller mappings from 'gamecontrollerdb.txt'"
     )
-    os.remove(gamecontrollerdb)
+    remove(gamecontrollerdb)
 except Exception as e:
     _debug_print(
         f"Failed to load 'gamecontrollerdb.txt'. Please open an issue on GitHub. \n --> {e}"
@@ -84,14 +84,14 @@ _images = {
     "b": "buttonhb.png",
     "x": "buttonhb.png",
     "y": "buttonhb.png",
-    "lt": "buttonhb.png",
-    "rt": "buttonhb.png",
-    "lb": "buttonhb.png",
     "rb": "buttonhb.png",
+    "lb": "buttonhb.png",
+    "rt": "buttonhb.png",
+    "lt": "buttonhb.png",
 }
 _debug_print("Images loaded.")
 
-layout_file = "layouthb.ini"
+_layout_file = "layouthb.ini"
 
 
 def load_configuration():
@@ -100,11 +100,11 @@ def load_configuration():
     layout = _layout.copy()
     images = _images.copy()
 
-    with pyglet.resource.file(layout_file, "r") as file:
+    with pyglet.resource.file(_layout_file, "r") as file:
         loaded_configs = config.read(file.name)
 
     if not loaded_configs:
-        _debug_print(f"No valid {layout_file} found. Falling back to default.")
+        _debug_print(f"No valid {_layout_file} found. Falling back to default.")
         return
 
     try:
@@ -117,14 +117,13 @@ def load_configuration():
 
         _layout = layout.copy()
         _images = images.copy()
-
     except (KeyError, ParsingError, NoSectionError):
-        _debug_print(f"Invalid theme/{layout_file}. Falling back to default.")
+        _debug_print(f"Invalid theme/{_layout_file}. Falling back to default.")
 
 
 def save_configuration():
     try:
-        with pyglet.resource.file(layout_file, "w") as file:
+        with pyglet.resource.file(_layout_file, "w") as file:
             config.write(file)
     except OSError:
         pass
@@ -135,7 +134,7 @@ def save_configuration():
 #########################
 
 class _BaseScene:
-    manager:    None
+    manager: None
 
     def activate(self):
         pass
@@ -205,7 +204,8 @@ class ConfigScene(_BaseScene):
 
 class MainScene(_BaseScene):
     # The main scene, with all fightstick events wired up.
-    def __init__(self):
+    def __init__(self, layout):
+        self.layout = layout
         self.batch = pyglet.graphics.Batch()
         # Ordered groups to handle draw order of the sprites.
         self.bg = pyglet.graphics.Group(0)
@@ -218,25 +218,33 @@ class MainScene(_BaseScene):
         self.down_spr = self._make_sprite("down", self.fg, False)
         self.left_spr = self._make_sprite("left", self.fg, False)
         self.right_spr = self._make_sprite("right", self.fg, False)
-        self.x_spr = self._make_sprite('x', self.fg, False)
-        self.y_spr = self._make_sprite('y', self.fg, False)
         self.a_spr = self._make_sprite('a', self.fg, False)
         self.b_spr = self._make_sprite('b', self.fg, False)
+        self.x_spr = self._make_sprite('x', self.fg, False)
+        self.y_spr = self._make_sprite('y', self.fg, False)
         self.rb_spr = self._make_sprite('rb', self.fg, False)
         self.lb_spr = self._make_sprite('lb', self.fg, False)
         self.rt_spr = self._make_sprite('rt', self.fg, False)
         self.lt_spr = self._make_sprite('lt', self.fg, False)
 
         # Mapping of (Input names : Sprite names).
-        self.button_mapping = {"a": self.a_spr, "b": self.b_spr, "x": self.x_spr, "y": self.y_spr,
-                               "rightshoulder": self.rb_spr, "leftshoulder": self.lb_spr,
-                               "righttrigger": self.rt_spr, "lefttrigger": self.lt_spr,
-                               "back": self.select_spr, "start": self.start_spr}
+        self.button_mapping = {
+            "a": self.a_spr,
+            "b": self.b_spr,
+            "x": self.x_spr,
+            "y": self.y_spr,
+            "rightshoulder": self.rb_spr,
+            "leftshoulder": self.lb_spr,
+            "righttrigger": self.rt_spr,
+            "lefttrigger": self.lt_spr,
+            "back": self.select_spr,
+            "start": self.start_spr
+        }
 
     def _make_sprite(self, name, group, visible=True):
         # Helper function to make a Sprite.
         image = pyglet.resource.image(_images[name])
-        position = _layout[name]
+        position = self.layout[name]
         sprite = pyglet.sprite.Sprite(image, *position, batch=self.batch, group=group)
         sprite.visible = visible
         return sprite
@@ -259,6 +267,27 @@ class MainScene(_BaseScene):
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
             pressed_button.visible = False
+
+    # Have the stick inputs alert the main window to draw the sprites.
+    def on_stick_motion(self, controller, stick, xvalue, yvalue):
+        assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
+        if stick == "leftstick":
+            if xvalue > self.manager.stick_deadzone:
+                self.right_spr.visible = True
+            else:
+                self.right_spr.visible = False
+            if xvalue < -self.manager.stick_deadzone:
+                self.left_spr.visible = True
+            else:
+                self.left_spr.visible = False
+            if yvalue > self.manager.stick_deadzone:
+                self.up_spr.visible = True
+            else:
+                self.up_spr.visible = False
+            if yvalue < -self.manager.stick_deadzone:
+                self.down_spr.visible = True
+            else:
+                self.down_spr.visible = False
 
     # Have the dpad hats alert the main window to draw the sprites.
     def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
@@ -298,7 +327,7 @@ class SceneManager:
     state (deadzone, etc.) is also defined here.
 
     """
-    def __init__(self, window_instance):
+    def __init__(self, window_instance, layout=_layout):
         self.window = window_instance
         self.window.push_handlers(self)
 
@@ -307,7 +336,7 @@ class SceneManager:
         # Set up Scene instances:
         self._scenes = {}
         self._current_scene = None
-        self.add_scene('main', MainScene())
+        self.add_scene('main', MainScene(layout))
         self.add_scene('retry', RetryScene())
         self.add_scene('config', ConfigScene())
 
@@ -328,7 +357,7 @@ class SceneManager:
         self.stick_deadzone = float(config.get('deadzones', 'stick', fallback='0.2'))
         self.trigger_deadzone = float(config.get('deadzones', 'trigger', fallback='0.8'))
 
-    # Detect is a controller is connected.
+    # Detect if a controller is connected.
     def on_controller_connect(self, controller):
         if not self.fightstick:
             controller.open()
@@ -338,7 +367,7 @@ class SceneManager:
         else:
             _debug_print(f"A Controller is already connected: {self.fightstick}")
 
-    # Detect is a controller is disconnected.
+    # Detect if a controller is disconnected.
     def on_controller_disconnect(self, controller):
         if self.fightstick == controller:
             self.fightstick.remove_handlers(self._current_scene)
@@ -374,7 +403,6 @@ class SceneManager:
             self.window.set_size(self.window.width, target_height)
 
     # Window Events:
-
     def on_draw(self):
         self.window.clear()
         self._current_scene.batch.draw()
