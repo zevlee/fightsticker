@@ -8,7 +8,11 @@ import pyglet
 from pyglet.util import debug_print
 from pyglet.math import Mat4, Vec3
 
-from . import APPDIR
+from . import APPDIR, LAYOUTS
+from . import LAYOUT_TRADITIONAL as L_TRA
+from . import IMAGES_TRADITIONAL as I_TRA
+from . import LAYOUT_LEVERLESS as L_LEV
+from . import IMAGES_LEVERLESS as I_LEV
 
 # Set up the debugging flag calls.
 _debug_flag = len(argv) > 1 and argv[1] in ('-D', '-d', '--debug')
@@ -196,10 +200,10 @@ class ConfigScene(_BaseScene):
         return pyglet.event.EVENT_HANDLED
 
 
-class MainScene(_BaseScene):
+class TraditionalScene(_BaseScene):
     # The main scene, with all fightstick events wired up.
-    def __init__(self, layout):
-        self.layout = layout
+    def __init__(self):
+        self.layout = L_TRA
         self.batch = pyglet.graphics.Batch()
         # Ordered groups to handle draw order of the sprites.
         self.bg = pyglet.graphics.Group(0)
@@ -234,7 +238,7 @@ class MainScene(_BaseScene):
 
     def _make_sprite(self, name, group, visible=True):
         # Helper function to make a Sprite.
-        image = pyglet.resource.image(_images[name])
+        image = pyglet.resource.image(I_TRA[name])
         position = self.layout[name]
         sprite = pyglet.sprite.Sprite(image, *position, batch=self.batch, group=group)
         sprite.visible = visible
@@ -300,6 +304,118 @@ class MainScene(_BaseScene):
                 self.rt_spr.visible = False
 
 
+class LeverlessScene(_BaseScene):
+    # The main scene, with all fightstick events wired up.
+    def __init__(self):
+        self.layout = L_LEV
+        self.batch = pyglet.graphics.Batch()
+        # Ordered groups to handle draw order of the sprites.
+        self.bg = pyglet.graphics.Group(0)
+        self.fg = pyglet.graphics.Group(1)
+        # Create all sprites using helper function (name, batch, group, visible).
+        self.background = self._make_sprite('background', self.bg)
+        self.select_spr = self._make_sprite('select', self.fg, False)
+        self.start_spr = self._make_sprite('start', self.fg, False)
+        self.up_spr = self._make_sprite("up", self.fg, False)
+        self.down_spr = self._make_sprite("down", self.fg, False)
+        self.left_spr = self._make_sprite("left", self.fg, False)
+        self.right_spr = self._make_sprite("right", self.fg, False)
+        self.a_spr = self._make_sprite('a', self.fg, False)
+        self.b_spr = self._make_sprite('b', self.fg, False)
+        self.x_spr = self._make_sprite('x', self.fg, False)
+        self.y_spr = self._make_sprite('y', self.fg, False)
+        self.rb_spr = self._make_sprite('rb', self.fg, False)
+        self.lb_spr = self._make_sprite('lb', self.fg, False)
+        self.rt_spr = self._make_sprite('rt', self.fg, False)
+        self.lt_spr = self._make_sprite('lt', self.fg, False)
+
+        # Mapping of (Input names : Sprite names).
+        self.button_mapping = {
+            "a": self.a_spr,
+            "b": self.b_spr,
+            "x": self.x_spr,
+            "y": self.y_spr,
+            "rightshoulder": self.rb_spr,
+            "leftshoulder": self.lb_spr,
+            "righttrigger": self.rt_spr,
+            "lefttrigger": self.lt_spr,
+            "back": self.select_spr,
+            "start": self.start_spr
+        }
+
+    def _make_sprite(self, name, group, visible=True):
+        # Helper function to make a Sprite.
+        image = pyglet.resource.image(I_LEV[name])
+        position = self.layout[name]
+        sprite = pyglet.sprite.Sprite(image, *position, batch=self.batch, group=group)
+        sprite.visible = visible
+        return sprite
+
+    def on_key_press(self, key, modifiers):
+        if key == pyglet.window.key.F1:
+            self.manager.set_scene('config')
+
+    # Event to show a button when pressed.
+    def on_button_press(self, controller, button):
+        assert _debug_print(f"Pressed Button: {button}")
+        if button == "guide":
+            self.manager.set_scene('config')
+        pressed_button = self.button_mapping.get(button, None)
+        if pressed_button:
+            pressed_button.visible = True
+
+    # Event to hide the sprite when the button is released.
+    def on_button_release(self, controller, button):
+        pressed_button = self.button_mapping.get(button, None)
+        if pressed_button:
+            pressed_button.visible = False
+
+    # Have the stick inputs alert the main window to draw the sprites.
+    def on_stick_motion(self, controller, stick, xvalue, yvalue):
+        assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
+        if stick == "leftstick":
+            if xvalue > self.manager.stick_deadzone:
+                self.right_spr.visible = True
+            else:
+                self.right_spr.visible = False
+            if xvalue < -self.manager.stick_deadzone:
+                self.left_spr.visible = True
+            else:
+                self.left_spr.visible = False
+            if yvalue > self.manager.stick_deadzone:
+                self.up_spr.visible = True
+            else:
+                self.up_spr.visible = False
+            if yvalue < -self.manager.stick_deadzone:
+                self.down_spr.visible = True
+            else:
+                self.down_spr.visible = False
+
+    # Have the dpad hats alert the main window to draw the sprites.
+    def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
+        assert _debug_print(
+            f"Dpad  Left:{dpleft}, Right:{dpright}, Up:{dpup}, Down:{dpdown}"
+        )
+        self.up_spr.visible = bool(dpup)
+        self.down_spr.visible = bool(dpdown)
+        self.left_spr.visible = bool(dpleft)
+        self.right_spr.visible = bool(dpright)
+
+    # Math to draw trigger inputs or hide them.
+    def on_trigger_motion(self, controller, trigger, value):
+        assert _debug_print(f"Pulled Trigger: {trigger}")
+        if trigger == "lefttrigger":
+            if value > self.manager.trigger_deadzone:
+                self.lt_spr.visible = True
+            elif value < self.manager.trigger_deadzone:
+                self.lt_spr.visible = False
+        if trigger == "righttrigger":
+            if value > self.manager.trigger_deadzone:
+                self.rt_spr.visible = True
+            elif value < self.manager.trigger_deadzone:
+                self.rt_spr.visible = False
+
+
 #####################################################
 #   SceneManager class to handle Scene Switching:
 #####################################################
@@ -313,7 +429,7 @@ class SceneManager:
     state (deadzone, etc.) is also defined here.
 
     """
-    def __init__(self, window_instance, layout=_layout):
+    def __init__(self, window_instance, layout="traditional"):
         self.window = window_instance
         self.window.push_handlers(self)
 
@@ -322,7 +438,11 @@ class SceneManager:
         # Set up Scene instances:
         self._scenes = {}
         self._current_scene = None
-        self.add_scene('main', MainScene(layout))
+        if layout == "leverless":
+            self.add_scene('main', LeverlessScene())
+        else:
+            self.add_scene('main', TraditionalScene())
+        # self.add_scene('main', MainScene(layout))
         self.add_scene('retry', RetryScene())
         self.add_scene('config', ConfigScene())
 
@@ -402,7 +522,7 @@ class SceneManager:
         return pyglet.event.EVENT_HANDLED
 
 
-def main():
+def main(layout):
     # Create the main window. Use configParser to set a static controller status of unplugged.
     window = pyglet.window.Window(
         640, 390, caption="Fightsticker", resizable=True, vsync=False
@@ -411,7 +531,7 @@ def main():
 
     load_configuration()
 
-    scene_manager = SceneManager(window_instance=window)
+    scene_manager = SceneManager(window_instance=window, layout=layout)
     # Enforce aspect ratio by readjusting the window height.
     pyglet.clock.schedule_interval(scene_manager.enforce_aspect_ratio, 0.3)
     pyglet.app.run()
