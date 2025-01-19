@@ -5,8 +5,7 @@ from tkinter import ttk
 
 from . import APPDIR, LAYOUTS
 from .arg_parser import ArgParser
-from .fightstick import main as main_traditional
-from .fightstick_hb import main as main_leverless
+from .fightstick import main
 
 
 class Window(ttk.Frame):
@@ -48,7 +47,7 @@ class Window(ttk.Frame):
     def _launch(self):
         match self.option_var.get():
             case "Traditional":
-                main_traditional()
+                main("traditional")
             case "Leverless":
-                main_leverless()
+                main("leverless")
         
