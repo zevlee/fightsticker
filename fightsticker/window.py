@@ -40,9 +40,9 @@ class Window(ttk.Frame):
         args = argv[1:]
         option = parser.parse_args(args)
         if option.TRADITIONAL:
-            main_traditional()
+            main("traditional")
         elif option.LEVERLESS:
-            main_leverless()
+            main("leverless")
 
     def _launch(self):
         match self.option_var.get():
