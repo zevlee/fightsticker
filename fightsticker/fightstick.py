@@ -271,11 +271,11 @@ class LayoutScene(_BaseScene):
                 self.rt_spr.visible = False
 
     # Math to draw stick inputs in their correct location.
-    def on_stick_motion(self, controller, stick, xvalue, yvalue):
+    def on_stick_motion(self, controller, stick, vector):
         pass
 
     # Math to draw dpad inputs in their correct location.
-    def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
+    def on_dpad_motion(self, controller, vector):
         pass
 
 
@@ -300,29 +300,21 @@ class TraditionalScene(LayoutScene):
         self.lt_spr = self._make_sprite('lt', self.fg, False)
 
     # Math to draw stick inputs in their correct location.
-    def on_stick_motion(self, controller, stick, xvalue, yvalue):
+    def on_stick_motion(self, controller, stick, vector):
+        assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             center_x, center_y = self.layout['stick']
-            if abs(xvalue) > self.manager.stick_deadzone:
-                center_x += (xvalue * 50)
-                assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
-            if abs(yvalue) > self.manager.stick_deadzone:
-                center_y += (yvalue * 50)
-                assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
+            if vector.length() > self.manager.stick_deadzone:
+                center_x += vector.x * 50
+                center_y += vector.y * 50
             self.stick_spr.position = center_x, center_y, 0
 
     # Math to draw dpad inputs in their correct location.
-    def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
-        assert _debug_print(f"Dpad  Left:{dpleft}, Right:{dpright}, Up:{dpup}, Down:{dpdown}")
+    def on_dpad_motion(self, controller, vector):
+        assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
         center_x, center_y = self.layout["stick"]
-        if dpup:
-            center_y += 50
-        elif dpdown:
-            center_y -= 50
-        if dpleft:
-            center_x -= 50
-        elif dpright:
-            center_x += 50
+        center_x += vector.x * 50
+        center_y += vector.y * 50
         self.stick_spr.position = center_x, center_y, 0
 
 
@@ -350,35 +342,21 @@ class LeverlessScene(LayoutScene):
         self.lt_spr = self._make_sprite('lt', self.fg, False)
 
     # Have the stick inputs alert the main window to draw the sprites.
-    def on_stick_motion(self, controller, stick, xvalue, yvalue):
-        assert _debug_print(f"Moved Stick: {stick}, {xvalue, yvalue}")
+    def on_stick_motion(self, controller, stick, vector):
+        assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
-            if xvalue > self.manager.stick_deadzone:
-                self.right_spr.visible = True
-            else:
-                self.right_spr.visible = False
-            if xvalue < -self.manager.stick_deadzone:
-                self.left_spr.visible = True
-            else:
-                self.left_spr.visible = False
-            if yvalue > self.manager.stick_deadzone:
-                self.up_spr.visible = True
-            else:
-                self.up_spr.visible = False
-            if yvalue < -self.manager.stick_deadzone:
-                self.down_spr.visible = True
-            else:
-                self.down_spr.visible = False
+            self.up_spr.visible = vector.y > self.manager.stick_deadzone
+            self.down_spr.visible = vector.y < -self.manager.stick_deadzone
+            self.left_spr.visible = vector.x < -self.manager.stick_deadzone
+            self.right_spr.visible = vector.x > self.manager.stick_deadzone
 
     # Have the dpad hats alert the main window to draw the sprites.
-    def on_dpad_motion(self, controller, dpleft, dpright, dpup, dpdown):
-        assert _debug_print(
-            f"Dpad  Left:{dpleft}, Right:{dpright}, Up:{dpup}, Down:{dpdown}"
-        )
-        self.up_spr.visible = bool(dpup)
-        self.down_spr.visible = bool(dpdown)
-        self.left_spr.visible = bool(dpleft)
-        self.right_spr.visible = bool(dpright)
+    def on_dpad_motion(self, controller, vector):
+        assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
+        self.up_spr.visible = vector.y > 0
+        self.down_spr.visible = vector.y < 0
+        self.left_spr.visible = vector.x < 0
+        self.right_spr.visible = vector.x > 0
 
 
 #####################################################
