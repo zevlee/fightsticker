@@ -284,14 +284,6 @@ class TraditionalScene(LayoutScene):
     def __init__(self):
         super().__init__(L_TRA, I_TRA)
 
-    def _make_sprite(self, name, group, visible=True):
-        # Helper function to make a Sprite.
-        image = pyglet.resource.image(self.images[name])
-        position = self.layout[name]
-        sprite = pyglet.sprite.Sprite(image, *position, batch=self.batch, group=group)
-        sprite.visible = visible
-        return sprite
-
     def _init_layout(self):
         # Create all sprites using helper function (name, batch, group, visible).
         self.background = self._make_sprite('background', self.bg)
