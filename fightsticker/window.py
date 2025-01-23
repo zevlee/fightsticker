@@ -5,7 +5,7 @@ from tkinter import ttk
 
 from . import APPDIR, LAYOUTS
 from .arg_parser import ArgParser
-from .fightstick import main
+from .fightstick import run
 
 
 class Window(ttk.Frame):
@@ -40,14 +40,14 @@ class Window(ttk.Frame):
         args = argv[1:]
         option = parser.parse_args(args)
         if option.TRADITIONAL:
-            main("traditional")
+            run("traditional")
         elif option.LEVERLESS:
-            main("leverless")
+            run("leverless")
 
     def _launch(self):
         match self.option_var.get():
             case "Traditional":
-                main("traditional")
+                run("traditional")
             case "Leverless":
-                main("leverless")
+                run("leverless")
         
