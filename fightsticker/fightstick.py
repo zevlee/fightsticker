@@ -132,8 +132,6 @@ def save_configuration():
 #########################
 
 class _BaseScene:
-    manager: None
-
     def activate(self):
         pass
 
@@ -465,7 +463,7 @@ class SceneManager:
         return pyglet.event.EVENT_HANDLED
 
 
-def main(layout):
+def run(layout):
     # Create the main window. Use configParser to set a static controller status of unplugged.
     window = pyglet.window.Window(
         640, 390, caption="Fightsticker", resizable=True, vsync=False
