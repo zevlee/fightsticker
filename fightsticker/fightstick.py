@@ -31,105 +31,6 @@ config.add_section('images')
 config.add_section('deadzones')
 _debug_print("Main window created")
 
-# Parse and add additional SDL style controller mappings.
-url = "https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt"
-gamecontrollerdb = join(APPDIR, "gamecontrollerdb.txt")
-try:
-    if exists(gamecontrollerdb):
-        with open(gamecontrollerdb) as f:
-            old_gamecontrollerdb = f.read()
-    else:
-        old_gamecontrollerdb = ""
-    with urlopen(url) as response, open(
-        gamecontrollerdb, "wb"
-    ) as f:
-        if response.read() != old_gamecontrollerdb:
-            f.write(response.read())
-    pyglet.input.controller.add_mappings_from_file(gamecontrollerdb)
-    _debug_print(
-        "Added additional controller mappings from 'gamecontrollerdb.txt'"
-    )
-    remove(gamecontrollerdb)
-except Exception as e:
-    _debug_print(
-        f"Failed to load 'gamecontrollerdb.txt'. Please open an issue on GitHub. \n --> {e}"
-    )
-
-# Set the (x,y) parameters for where certain elements should be displayed.
-_layout = {
-    "background": (0, 0),
-    "select": (50, 318),
-    "start": (50, 318),
-    "stick": (118, 153),
-    "a": (256, 83),
-    "b": (336, 113),
-    "x": (275, 173),
-    "y": (354, 203),
-    "rb": (440, 202),
-    "lb": (527, 199),
-    "rt": (421, 112),
-    "lt": (507, 109),
-}
-_debug_print("Layout loaded.")
-
-# Connect the image file names to their definitions.
-_images = {
-    "background": "background.png",
-    "select": "select.png",
-    "start": "start.png",
-    "stick": "stick.png",
-    "a": "button.png",
-    "b": "button.png",
-    "x": "button.png",
-    "y": "button.png",
-    "rb": "button.png",
-    "lb": "button.png",
-    "rt": "button.png",
-    "lt": "button.png",
-}
-_debug_print("Images loaded.")
-
-_layout_file = "layout.ini"
-
-
-def load_configuration():
-    # Load the button mapping configuration.
-    global _layout, _images
-    layout = _layout.copy()
-    images = _images.copy()
-
-    with pyglet.resource.file(_layout_file, "r") as file:
-        loaded_configs = config.read(file.name)
-
-    if not loaded_configs:
-        _debug_print(f"No valid {_layout_file} found. Falling back to default.")
-        return
-
-    try:
-        for key, value in config.items('layout'):
-            x, y = value.split(', ')
-            layout[key] = int(x), int(y)
-
-        for key, value in config.items('images'):
-            images[key] = value
-
-        _layout = layout.copy()
-        _images = images.copy()
-    except (KeyError, ParsingError, NoSectionError):
-        _debug_print(f"Invalid theme/{_layout_file}. Falling back to default.")
-
-
-def save_configuration():
-    try:
-        with pyglet.resource.file(_layout_file, "w") as file:
-            config.write(file)
-    except OSError:
-        pass
-
-
-#########################
-#   Scene definitions:
-#########################
 
 class _BaseScene:
     def activate(self):
@@ -469,8 +370,6 @@ def run(layout):
         640, 390, caption="Fightsticker", resizable=True, vsync=False
     )
     window.set_icon(pyglet.resource.image("icon.png"))
-
-    load_configuration()
 
     scene_manager = SceneManager(window_instance=window, layout=layout)
     # Enforce aspect ratio by readjusting the window height.
