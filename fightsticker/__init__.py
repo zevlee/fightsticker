@@ -72,21 +72,21 @@ LAYOUT_LEVERLESS = {
 }
 # Leverless layout images
 IMAGES_LEVERLESS = {
-    "background": "backgroundHB.png",
+    "background": "backgroundlv.png",
     "select": "transparent.png",
     "start": "transparent.png",
-    "up": "buttonhblg.png",
-    "down": "buttonhb.png",
-    "left": "buttonhb.png",
-    "right": "buttonhb.png",
-    "a": "buttonhb.png",
-    "b": "buttonhb.png",
-    "x": "buttonhb.png",
-    "y": "buttonhb.png",
-    "rb": "buttonhb.png",
-    "lb": "buttonhb.png",
-    "rt": "buttonhb.png",
-    "lt": "buttonhb.png",
+    "up": "buttonlvlg.png",
+    "down": "buttonlv.png",
+    "left": "buttonlv.png",
+    "right": "buttonlv.png",
+    "a": "buttonlv.png",
+    "b": "buttonlv.png",
+    "x": "buttonlv.png",
+    "y": "buttonlv.png",
+    "rb": "buttonlv.png",
+    "lb": "buttonlv.png",
+    "rt": "buttonlv.png",
+    "lt": "buttonlv.png",
 }
 # Window width
 WINDOW_WIDTH = 640
