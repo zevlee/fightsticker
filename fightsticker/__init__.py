@@ -86,6 +86,10 @@ IMAGES_LEVERLESS = {
     "rt": "buttonhb.png",
     "lt": "buttonhb.png",
 }
+# Window width
+WINDOW_WIDTH = 640
+# Window height
+WINDOW_HEIGHT = 390
 
 
 def read_config(filename):

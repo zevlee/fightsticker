@@ -8,7 +8,7 @@ import pyglet
 from pyglet.util import debug_print
 from pyglet.math import Mat4, Vec3
 
-from . import APPDIR, CONF, LAYOUTS
+from . import APPDIR, CONF, LAYOUTS, WINDOW_WIDTH, WINDOW_HEIGHT
 from . import LAYOUT_TRADITIONAL as L_TRA
 from . import IMAGES_TRADITIONAL as I_TRA
 from . import LAYOUT_LEVERLESS as L_LEV
@@ -21,6 +21,7 @@ _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
 pyglet.resource.path.append(join(CONF, "theme"))
+pyglet.resource.path.append(join(CONF, "layouts"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -48,59 +49,6 @@ class RetryScene(_BaseScene):
         self.batch = pyglet.graphics.Batch()
         self.missing_img = pyglet.resource.image("missing.png")
         self.sprite = pyglet.sprite.Sprite(img=pyglet.resource.image("missing.png"), batch=self.batch)
-
-
-class ConfigScene(_BaseScene):
-    """
-    A scene to allow deadzone configuration.
-    """
-    def __init__(self):
-        self.batch = pyglet.graphics.Batch()
-        bar = pyglet.resource.image("bar.png")
-        knob = pyglet.resource.image("knob.png")
-        bg_img = pyglet.resource.image('deadzone.png')
-        self.bg = pyglet.sprite.Sprite(bg_img, batch=self.batch, group=pyglet.graphics.Group(-1))
-
-        self.stick_slider = pyglet.gui.Slider(100, 150, bar, knob, edge=0, batch=self.batch)
-        self.stick_slider.set_handler('on_change', self._stick_slider_handler)
-        self.stick_label = pyglet.text.Label("", x=380, y=150, batch=self.batch)
-
-        self.trigger_slider = pyglet.gui.Slider(100, 100, bar, knob, edge=0, batch=self.batch)
-        self.trigger_slider.set_handler('on_change', self._trigger_slider_handler)
-        self.trigger_label = pyglet.text.Label("", x=380, y=100, batch=self.batch)
-
-    def activate(self):
-        self.stick_slider.value = self.manager.stick_deadzone * 100
-        self.trigger_slider.value = self.manager.trigger_deadzone * 100
-        self.stick_label.text = f"Stick Deadzone: {round(self.manager.stick_deadzone * 100, 2)}"
-        self.trigger_label.text = f"Trigger Deadzone: {round(self.manager.trigger_deadzone * 100, 2)}"
-        self.manager.window.push_handlers(self.stick_slider)
-        self.manager.window.push_handlers(self.trigger_slider)
-
-    def deactivate(self):
-        self.manager.window.remove_handlers(self.stick_slider)
-        self.manager.window.remove_handlers(self.trigger_slider)
-        # save_configuration()
-
-    def _stick_slider_handler(self, slider, value):
-        self.stick_label.text = f"Stick Deadzone: {round(value, 2)}"
-        scaled_value = round(value / 100, 2)
-        self.manager.stick_deadzone = scaled_value
-        config.set('deadzones', 'stick', str(scaled_value))
-
-    def _trigger_slider_handler(self, slider, value):
-        self.trigger_label.text = f"Trigger Deadzone: {round(value, 2)}"
-        scaled_value = round(value / 100, 2)
-        self.manager.trigger_deadzone = scaled_value
-        config.set('deadzones', 'trigger', str(scaled_value))
-
-    def on_button_press(self, controller, button):
-        if button == "guide":
-            self.manager.set_scene('main')
-
-    def on_key_press(self, key, modifiers):
-        self.manager.set_scene('main')
-        return pyglet.event.EVENT_HANDLED
 
 
 class LayoutScene(_BaseScene):
@@ -142,15 +90,9 @@ class LayoutScene(_BaseScene):
         # Create all sprites using helper function (name, batch, group, visible).
         pass
 
-    def on_key_press(self, key, modifiers):
-        if key == pyglet.window.key.F1:
-            self.manager.set_scene('config')
-
     # Event to show a button when pressed.
     def on_button_press(self, controller, button):
         assert _debug_print(f"Pressed Button: {button}")
-        if button == "guide":
-            self.manager.set_scene('config')
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
             pressed_button.visible = True
@@ -268,10 +210,6 @@ class LeverlessScene(LayoutScene):
         self.right_spr.visible = vector.x > 0
 
 
-#####################################################
-#   SceneManager class to handle Scene Switching:
-#####################################################
-
 class SceneManager:
     """A Scene Management class.
 
@@ -294,9 +232,7 @@ class SceneManager:
             self.add_scene('main', LeverlessScene())
         else:
             self.add_scene('main', TraditionalScene())
-        # self.add_scene('main', MainScene(layout))
         self.add_scene('retry', RetryScene())
-        self.add_scene('config', ConfigScene())
 
         # Instantiation a ControllerManager to handle hot-plugging:
         self.controller_manager = pyglet.input.ControllerManager()
@@ -367,8 +303,8 @@ class SceneManager:
 
     def on_resize(self, width, height):
         projection_matrix = Mat4.orthogonal_projection(0, width, 0, height, 0, 1)
-        scale_x = width / 640.0
-        scale_y = height / 390.0
+        scale_x = width / WINDOW_WIDTH
+        scale_y = height / WINDOW_HEIGHT
         self.window.projection = projection_matrix.scale(Vec3(scale_x, scale_y, 1))
         self.window.viewport = 0, 0, width, height
         return pyglet.event.EVENT_HANDLED
@@ -377,7 +313,11 @@ class SceneManager:
 def run(layout):
     # Create the main window. Use configParser to set a static controller status of unplugged.
     window = pyglet.window.Window(
-        640, 390, caption="Fightsticker", resizable=True, vsync=False
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        caption="Fightsticker",
+        resizable=True,
+        vsync=False
     )
     window.set_icon(pyglet.resource.image("icon.png"))
 
