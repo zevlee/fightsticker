@@ -45,6 +45,11 @@ class Application(Adw.Application):
                 join(APPDIR, "theme"),
                 join(CONF, "theme")
             )
+        if not exists(join(CONF, "layouts")):
+            copytree(
+                join(APPDIR, "layouts"),
+                join(CONF, "layouts")
+            )
         if not exists(join(CONF, "default.json")):
             with open(join(CONF, "default.json"), "w") as d:
                 d.write(dumps(DEFAULT))

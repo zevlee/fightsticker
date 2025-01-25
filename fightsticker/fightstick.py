@@ -8,7 +8,7 @@ import pyglet
 from pyglet.util import debug_print
 from pyglet.math import Mat4, Vec3
 
-from . import APPDIR, CONF, LAYOUTS, WINDOW_WIDTH, WINDOW_HEIGHT
+from . import APPDIR, CONF, LAYOUTS, DEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT
 from . import LAYOUT_TRADITIONAL as L_TRA
 from . import IMAGES_TRADITIONAL as I_TRA
 from . import LAYOUT_LEVERLESS as L_LEV
@@ -21,7 +21,6 @@ _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
 pyglet.resource.path.append(join(CONF, "theme"))
-pyglet.resource.path.append(join(CONF, "layouts"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -29,7 +28,6 @@ _debug_print("Theme Loaded")
 config = ConfigParser()
 config.add_section('layout')
 config.add_section('images')
-config.add_section('deadzones')
 _debug_print("Main window created")
 
 
@@ -219,7 +217,7 @@ class SceneManager:
     state (deadzone, etc.) is also defined here.
 
     """
-    def __init__(self, window_instance, layout="traditional"):
+    def __init__(self, window_instance, layout="traditional", config=DEFAULT):
         self.window = window_instance
         self.window.push_handlers(self)
 
@@ -248,8 +246,8 @@ class SceneManager:
             self.set_scene('retry')
 
         # Global state for all Scenes:
-        self.stick_deadzone = float(config.get('deadzones', 'stick', fallback='0.2'))
-        self.trigger_deadzone = float(config.get('deadzones', 'trigger', fallback='0.8'))
+        self.stick_deadzone = config["stick"]
+        self.trigger_deadzone = config["trigger"]
 
     # Detect if a controller is connected.
     def on_controller_connect(self, controller):
@@ -310,7 +308,7 @@ class SceneManager:
         return pyglet.event.EVENT_HANDLED
 
 
-def run(layout):
+def run(layout, config):
     # Create the main window. Use configParser to set a static controller status of unplugged.
     window = pyglet.window.Window(
         WINDOW_WIDTH,
@@ -321,7 +319,7 @@ def run(layout):
     )
     window.set_icon(pyglet.resource.image("icon.png"))
 
-    scene_manager = SceneManager(window_instance=window, layout=layout)
+    scene_manager = SceneManager(window_instance=window, layout=layout, config=config)
     # Enforce aspect ratio by readjusting the window height.
     pyglet.clock.schedule_interval(scene_manager.enforce_aspect_ratio, 0.3)
     pyglet.app.run()

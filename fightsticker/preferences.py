@@ -53,7 +53,7 @@ class Preferences(Gtk.Window):
             column_spacing=spacing
         )
 
-        # # Open stored preferences
+        # Open stored preferences
         self.config = read_config("settings.json")
 
         # Appearance check button
@@ -63,6 +63,22 @@ class Preferences(Gtk.Window):
         # Debug mode check button
         self.dbg = Gtk.CheckButton(label="Debug Mode")
         self.dbg.set_active(self.config["dbg"])
+
+        # Stick deadzone label and entry field
+        stick = Gtk.Label(halign=Gtk.Align.START)
+        stick.set_markup("<b>Stick Deadzone</b>")
+        self.stick = Gtk.Entry()
+        self.stick.set_text(str(self.config["stick"]))
+
+        # Trigger deadzone label and entry field
+        trigger = Gtk.Label(halign=Gtk.Align.START)
+        trigger.set_markup("<b>Trigger Deadzone</b>")
+        self.trigger = Gtk.Entry()
+        self.trigger.set_text(str(self.config["trigger"]))
+
+        # Restore defaults button
+        restore_button = Gtk.Button(label="Restore Defaults")
+        restore_button.connect("clicked", self.on_restore_clicked)
 
         # Cancel and save buttons
         cancel_button = Gtk.Button(label="Cancel")
@@ -74,6 +90,9 @@ class Preferences(Gtk.Window):
         widgets = [
             [self.app],
             [self.dbg],
+            [stick, self.stick],
+            [trigger, self.trigger],
+            [restore_button],
             [cancel_button, save_button]
         ]
         for i in range(len(widgets)):
@@ -84,26 +103,6 @@ class Preferences(Gtk.Window):
         # Add grid
         self.set_child(grid)
 
-    def on_select_clicked(self, button):
-        """
-        Set all symbol check buttons to true
-        
-        :param button: Button
-        :type button: Gtk.Button
-        """
-        for widget in self.symbols:
-            widget.set_active(True)
-
-    def on_deselect_clicked(self, button):
-        """
-        Set all symbol check buttons to false
-        
-        :param button: Button
-        :type button: Gtk.Button
-        """
-        for widget in self.symbols:
-            widget.set_active(False)
-
     def on_cancel_clicked(self, button):
         """
         Close preferences window without saving
@@ -112,6 +111,18 @@ class Preferences(Gtk.Window):
         :type button: Gtk.Button
         """
         self.destroy()
+
+    def on_restore_clicked(self, button):
+        """
+        Restore default values
+        
+        :param button: Button
+        :type button: Gtk.Button
+        """
+        self.app.set_active(DEFAULT["app"])
+        self.dbg.set_active(DEFAULT["dbg"])
+        self.stick.set_text(str(DEFAULT["stick"]))
+        self.trigger.set_text(str(DEFAULT["trigger"]))
 
     def on_save_clicked(self, button):
         """
@@ -124,6 +135,8 @@ class Preferences(Gtk.Window):
         with open(join(CONF, "settings.json"), "w") as c:
             self.config["app"] = self.app.get_active()
             self.config["dbg"] = self.dbg.get_active()
+            self.config["stick"] = float(self.stick.get_text())
+            self.config["trigger"] = float(self.trigger.get_text())
             c.write(dumps(self.config))
             c.close()
         # Set color scheme
