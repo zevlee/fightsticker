@@ -14,6 +14,7 @@ a = Analysis(
     datas=[
         ('LICENSE', '.'),
         ('theme', 'theme'),
+        ('layouts', 'layouts'),
         ('gui', 'gui'),
         ('linux/icons', 'usr/share/icons'),
         ('logo/me.zevlee.Fightsticker.png','logo')
