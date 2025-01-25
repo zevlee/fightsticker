@@ -8,7 +8,7 @@ import pyglet
 from pyglet.util import debug_print
 from pyglet.math import Mat4, Vec3
 
-from . import APPDIR, LAYOUTS
+from . import APPDIR, CONF, LAYOUTS
 from . import LAYOUT_TRADITIONAL as L_TRA
 from . import IMAGES_TRADITIONAL as I_TRA
 from . import LAYOUT_LEVERLESS as L_LEV
@@ -20,7 +20,7 @@ _debug_print = debug_print(_debug_flag)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
-pyglet.resource.path.append(join(APPDIR, "theme"))
+pyglet.resource.path.append(join(CONF, "theme"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -41,7 +41,9 @@ class _BaseScene:
 
 
 class RetryScene(_BaseScene):
-    #A scene that tells you to try again if no stick is detected.
+    """
+    A scene that tells you to try again if no stick is detected.
+    """
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
         self.missing_img = pyglet.resource.image("missing.png")
@@ -49,7 +51,9 @@ class RetryScene(_BaseScene):
 
 
 class ConfigScene(_BaseScene):
-    #A scene to allow deadzone configuration.
+    """
+    A scene to allow deadzone configuration.
+    """
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
         bar = pyglet.resource.image("bar.png")
@@ -76,15 +80,15 @@ class ConfigScene(_BaseScene):
     def deactivate(self):
         self.manager.window.remove_handlers(self.stick_slider)
         self.manager.window.remove_handlers(self.trigger_slider)
-        save_configuration()
+        # save_configuration()
 
-    def _stick_slider_handler(self, value):
+    def _stick_slider_handler(self, slider, value):
         self.stick_label.text = f"Stick Deadzone: {round(value, 2)}"
         scaled_value = round(value / 100, 2)
         self.manager.stick_deadzone = scaled_value
         config.set('deadzones', 'stick', str(scaled_value))
 
-    def _trigger_slider_handler(self, value):
+    def _trigger_slider_handler(self, slider, value):
         self.trigger_label.text = f"Trigger Deadzone: {round(value, 2)}"
         scaled_value = round(value / 100, 2)
         self.manager.trigger_deadzone = scaled_value
@@ -100,7 +104,9 @@ class ConfigScene(_BaseScene):
 
 
 class LayoutScene(_BaseScene):
-    # The main scene, with all fightstick events wired up.
+    """
+    Layout scene, with common methods ready to be wired
+    """
     def __init__(self, layout, images):
         self.layout = layout
         self.images = images
@@ -179,9 +185,11 @@ class LayoutScene(_BaseScene):
 
 
 class TraditionalScene(LayoutScene):
-    # The main scene, with all fightstick events wired up.
-    def __init__(self):
-        super().__init__(L_TRA, I_TRA)
+    """
+    Traditional layout scene, all fightstick events wired up
+    """
+    def __init__(self, layout=L_TRA, images=I_TRA):
+        super().__init__(layout, images)
 
     def _init_layout(self):
         # Create all sprites using helper function (name, batch, group, visible).
@@ -218,9 +226,11 @@ class TraditionalScene(LayoutScene):
 
 
 class LeverlessScene(LayoutScene):
-    # The main scene, with all fightstick events wired up.
-    def __init__(self):
-        super().__init__(L_LEV, I_LEV)
+    """
+    Leverless layout scene, all fightstick events wired up
+    """
+    def __init__(self, layout=L_LEV, images=I_LEV):
+        super().__init__(layout, images)
 
     def _init_layout(self):
         # Create all sprites using helper function (name, batch, group, visible).

@@ -1,11 +1,25 @@
-from os.path import dirname
+from json import loads
+from os.path import dirname, join
+
+from platformdirs import user_config_dir
 
 # Version
-__version__ = "0.2.0"
-# Available layouts
-LAYOUTS = ("Traditional", "Leverless")
+__version__ = "0.4.0"
+# Application name
+APPNAME = "Fightsticker"
+# Application ID
+ID = "me.zevlee.Fightsticker"
 # Application directory
 APPDIR = dirname(dirname(__file__))
+# Config directory
+CONF = user_config_dir(APPNAME)
+# Default parameters
+DEFAULT = {
+    "app": True,
+    "dbg": False
+}
+# Available layouts
+LAYOUTS = ("Traditional", "Leverless")
 # Traditional layout parameters
 LAYOUT_TRADITIONAL = {
     "background": (0, 0),
@@ -72,3 +86,53 @@ IMAGES_LEVERLESS = {
     "rt": "buttonhb.png",
     "lt": "buttonhb.png",
 }
+
+
+def read_config(filename):
+    """
+    Given a filename `filename`, return the configuration dictionary or
+    the default configuration if `filename` is not found
+    
+    :param filename: Filename
+    :type filename: str
+    :return: Configuration dictionary
+    :rtype: dict
+    """
+    try:
+        config = loads(open(join(CONF, filename), "r").read())
+    except FileNotFoundError:
+        config = DEFAULT
+    return config
+
+
+def validate_config(filename, default="RESET"):
+    """
+    Given a filename `filename`, replace the file with filename `default`
+    if it is not valid
+    
+    :param filename: Config filename
+    :type filename: str
+    :param default: Default filename
+    :type default: str
+    """
+    overwrite = False
+    default_config = read_config(default)
+    config = read_config(filename)
+    # Remove invalid keys
+    for key in [k for k in config.keys() if k not in DEFAULT.keys()]:
+        config.pop(key)
+        overwrite = True
+    # Add missing keys
+    for key in [k for k in DEFAULT.keys() if k not in config.keys()]:
+        config[key] = default_config[key]
+        overwrite = True
+    # Validate config options
+    for k in ["app", "dbg"]:
+        if not isinstance(config[k], int):
+            config[k] = default_config[k]
+            overwrite = True
+    # Overwrite filename if there is an error
+    if overwrite:
+        with open(join(CONF, filename), "w") as c:
+            c.write(dumps(config))
+            c.close()

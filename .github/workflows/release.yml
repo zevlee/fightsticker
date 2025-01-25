@@ -21,6 +21,9 @@ jobs:
           sudo apt update
           sudo apt upgrade
           sudo apt install desktop-file-utils
+          sudo ./linux/bootstrap.sh
+          python3 -m pip install pycairo
+          python3 -m pip install PyGObject
       - name: Set up environment
         run: |
           cp .env.ci .env
@@ -39,10 +42,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          ./macos/bootstrap.sh
+          python3 -m pip install pycairo
+          python3 -m pip install PyGObject
       - name: Set up environment
         env:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
@@ -82,10 +86,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          # Workaround for externally-managed-environment error
+          python3 -m pip config --global set global.break-system-packages true
+          ./macos/bootstrap.sh
+          python3 -m pip install pycairo
+          python3 -m pip install PyGObject
       - name: Set up environment
         env:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
@@ -122,6 +129,9 @@ jobs:
   build-windows:
     name: Build for Windows
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -129,6 +139,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+      - name: Install dependencies
+        run: |
+          ./windows/bootstrap.sh
       - name: Set up environment
         run: |
           cp .env.ci .env
