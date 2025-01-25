@@ -14,11 +14,20 @@ a = Analysis(
     datas=[
         ('LICENSE', '.'),
         ('theme', 'theme'),
+        ('linux/icons', 'usr/share/icons'),
         ('logo/me.zevlee.Fightsticker.png','logo')
     ],
     hiddenimports=[],
     hookspath=[],
-    hooksconfig={},
+    hooksconfig={
+        'gi': {
+            'icons': ['Adwaita'],
+            'themes': ['Adwaita'],
+            'module-versions': {
+                'Gtk': '4.0'
+            }
+        }
+    },
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
