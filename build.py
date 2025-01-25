@@ -131,7 +131,7 @@ class Build:
         :return: Return code
         :rtype: int
         """
-        venv = join(self.srcdir, ".venv")
+        venv = join(self.srcdir, "venv")
         self.logger.info(f"Setting up virtual environment: {venv}")
         self.py = join(venv, PYEXE)
         create(
@@ -177,7 +177,7 @@ class Build:
         :rtype: int
         """
         self.logger.debug(f"Removing venv")
-        rmtree(".venv")
+        rmtree("venv")
         self.logger.debug(f"Removed venv")
         return 0
 
