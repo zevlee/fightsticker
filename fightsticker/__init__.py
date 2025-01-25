@@ -1,10 +1,10 @@
-from json import loads
+from json import dumps, loads
 from os.path import dirname, join
 
 from platformdirs import user_config_dir
 
 # Version
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 # Application name
 APPNAME = "Fightsticker"
 # Application ID
@@ -16,7 +16,9 @@ CONF = user_config_dir(APPNAME)
 # Default parameters
 DEFAULT = {
     "app": True,
-    "dbg": False
+    "dbg": False,
+    "stick": 0.2,
+    "trigger": 0.8
 }
 # Available layouts
 LAYOUTS = ("Traditional", "Leverless")

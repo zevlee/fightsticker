@@ -104,14 +104,17 @@ class Window(Gtk.ApplicationWindow):
         # Add grid
         self.set_child(grid)
 
+        # Open stored preferences
+        self.config = read_config("settings.json")
+
         # Command line arguments
         parser = ArgParser()
         args = argv[1:]
         option = parser.parse_args(args)
         if option.TRADITIONAL:
-            run("traditional")
+            run(layout="traditional", config=self.config)
         elif option.LEVERLESS:
-            run("leverless")
+            run(layout="leverless", config=self.config)
 
     def on_prefs_clicked(self, action, param):
         """
@@ -147,6 +150,6 @@ class Window(Gtk.ApplicationWindow):
         self.close()
         match self.dropdown.props.selected_item.props.string:
             case "Traditional":
-                run("traditional")
+                run(layout="traditional", config=self.config)
             case "Leverless":
-                run("leverless")
+                run(layout="leverless", config=self.config)
