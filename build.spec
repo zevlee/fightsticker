@@ -116,7 +116,7 @@ elif system() == "Darwin":
         )
         app = BUNDLE(
             coll,
-            name='Hello World.app',
+            name='Fightsticker.app',
             icon='macos/me.zevlee.Fightsticker.icns',
             bundle_identifier=None,
             version=None,
