@@ -112,8 +112,10 @@ class Window(Gtk.ApplicationWindow):
         args = argv[1:]
         option = parser.parse_args(args)
         if option.TRADITIONAL:
+            self.close()
             run(layout="traditional", config=self.config)
         elif option.LEVERLESS:
+            self.close()
             run(layout="leverless", config=self.config)
 
     def on_prefs_clicked(self, action, param):
