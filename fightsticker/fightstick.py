@@ -23,11 +23,6 @@ _debug_print("Debugging Active")
 pyglet.resource.path.append(join(CONF, "theme"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
-
-# Create the main window. Use configParser to set a static controller status of unplugged.
-config = ConfigParser()
-config.add_section('layout')
-config.add_section('images')
 _debug_print("Main window created")
 
 
@@ -128,7 +123,7 @@ class TraditionalScene(LayoutScene):
     """
     Traditional layout scene, all fightstick events wired up
     """
-    def __init__(self, layout=L_TRA, images=I_TRA):
+    def __init__(self, layout, images):
         super().__init__(layout, images)
 
     def _init_layout(self):
@@ -159,7 +154,7 @@ class TraditionalScene(LayoutScene):
     # Math to draw dpad inputs in their correct location.
     def on_dpad_motion(self, controller, vector):
         assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
-        center_x, center_y = self.layout["stick"]
+        center_x, center_y = self.layout["stic"]
         center_x += vector.x * 50
         center_y += vector.y * 50
         self.stick_spr.position = center_x, center_y, 0
@@ -169,7 +164,7 @@ class LeverlessScene(LayoutScene):
     """
     Leverless layout scene, all fightstick events wired up
     """
-    def __init__(self, layout=L_LEV, images=I_LEV):
+    def __init__(self, layout, images):
         super().__init__(layout, images)
 
     def _init_layout(self):
@@ -223,13 +218,35 @@ class SceneManager:
 
         self.fightstick = None
 
+        # Set up configuration parser
+        config_parser = ConfigParser()
+        config_parser.add_section("layout")
+        config_parser.add_section("images")
+        # Read the layout file
+        layout_file = config[layout[:4]]
+        if layout == "leverless":
+            layout_conf = L_LEV
+            images_conf = I_LEV
+        else:
+            layout_conf = L_TRA
+            images_conf = I_TRA
+        if config_parser.read(layout_file):
+            try:
+                for k, v in config_parser.items("layout"):
+                    x, y = v.split(', ')
+                    layout_conf[k] = int(x), int(y)
+                for k, v in config_parser.items("images"):
+                    images_conf[k] = v
+            except (KeyError, ParsingError, NoSectionError):
+                _debug_print("Invalid theme/layout.ini. Falling back to default.")
+
         # Set up Scene instances:
         self._scenes = {}
         self._current_scene = None
         if layout == "leverless":
-            self.add_scene('main', LeverlessScene())
+            self.add_scene('main', LeverlessScene(layout_conf, images_conf))
         else:
-            self.add_scene('main', TraditionalScene())
+            self.add_scene('main', TraditionalScene(layout_conf, images_conf))
         self.add_scene('retry', RetryScene())
 
         # Instantiation a ControllerManager to handle hot-plugging:
@@ -246,8 +263,8 @@ class SceneManager:
             self.set_scene('retry')
 
         # Global state for all Scenes:
-        self.stick_deadzone = config["stick"]
-        self.trigger_deadzone = config["trigger"]
+        self.stick_deadzone = config["stic"]
+        self.trigger_deadzone = config["trig"]
 
     # Detect if a controller is connected.
     def on_controller_connect(self, controller):
@@ -309,7 +326,7 @@ class SceneManager:
 
 
 def run(layout, config):
-    # Create the main window. Use configParser to set a static controller status of unplugged.
+    # Create the main window. Use ConfigParser to set a static controller status of unplugged.
     window = pyglet.window.Window(
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
