@@ -38,28 +38,38 @@ class _BaseScene:
 
 class RetryScene(_BaseScene):
     """
-    A scene that tells you to try again if no stick is detected.
+    A scene that tells you to try again if no stick is detected
     """
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
         self.missing_img = pyglet.resource.image("missing.png")
-        self.sprite = pyglet.sprite.Sprite(img=pyglet.resource.image("missing.png"), batch=self.batch)
+        self.sprite = pyglet.sprite.Sprite(
+            img=pyglet.resource.image("missing.png"), batch=self.batch
+        )
 
 
 class LayoutScene(_BaseScene):
     """
     Layout scene, with common methods ready to be wired
+    
+    :param layout: Layout mapping
+    :type layout: dict
+    :param images: Images mapping
+    :type images: dict
     """
     def __init__(self, layout, images):
+        """
+        Constructor
+        """
         self.layout = layout
         self.images = images
         self.batch = pyglet.graphics.Batch()
-        # Ordered groups to handle draw order of the sprites.
+        # Ordered groups to handle draw order of the sprites
         self.bg = pyglet.graphics.Group(0)
         self.fg = pyglet.graphics.Group(1)
         # Initialize the layout
         self._init_layout()
-        # Mapping of (Input names : Sprite names).
+        # Mapping of (Input names : Sprite names)
         self.button_mapping = {
             "a": self.a_spr,
             "b": self.b_spr,
@@ -74,32 +84,45 @@ class LayoutScene(_BaseScene):
         }
 
     def _make_sprite(self, name, group, visible=True):
-        # Helper function to make a Sprite.
+        """
+        Helper function to make a Sprite
+        """
         image = pyglet.resource.image(self.images[name])
         position = self.layout[name]
-        sprite = pyglet.sprite.Sprite(image, *position, batch=self.batch, group=group)
+        sprite = pyglet.sprite.Sprite(
+            image, *position, batch=self.batch, group=group
+        )
         sprite.visible = visible
         return sprite
 
     def _init_layout(self):
-        # Create all sprites using helper function (name, batch, group, visible).
+        """
+        Create all sprites using helper function (name, batch, group,
+        visible)
+        """
         pass
 
-    # Event to show a button when pressed.
     def on_button_press(self, controller, button):
+        """
+        Event to show a button when pressed
+        """
         assert _debug_print(f"Pressed Button: {button}")
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
             pressed_button.visible = True
 
-    # Event to hide the sprite when the button is released.
     def on_button_release(self, controller, button):
+        """
+        Event to hide the sprite when the button is released
+        """
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
             pressed_button.visible = False
 
-    # Math to draw trigger inputs or hide them.
     def on_trigger_motion(self, controller, trigger, value):
+        """
+        Math to draw trigger inputs or hide them
+        """
         assert _debug_print(f"Pulled Trigger: {trigger}")
         if trigger == "lefttrigger":
             if value > self.manager.trigger_deadzone:
@@ -112,39 +135,56 @@ class LayoutScene(_BaseScene):
             elif value < self.manager.trigger_deadzone:
                 self.rt_spr.visible = False
 
-    # Math to draw stick inputs in their correct location.
     def on_stick_motion(self, controller, stick, vector):
+        """
+        Math to draw stick inputs in their correct location
+        """
         pass
 
-    # Math to draw dpad inputs in their correct location.
     def on_dpad_motion(self, controller, vector):
+        """
+        Math to draw dpad inputs in their correct location
+        """
         pass
 
 
 class TraditionalScene(LayoutScene):
     """
     Traditional layout scene, all fightstick events wired up
+    
+    :param layout: Layout mapping
+    :type layout: dict
+    :param images: Images mapping
+    :type images: dict
     """
     def __init__(self, layout, images):
+        """
+        Constructor
+        """
         super().__init__(layout, images)
 
     def _init_layout(self):
-        # Create all sprites using helper function (name, batch, group, visible).
-        self.background = self._make_sprite('background', self.bg)
-        self.select_spr = self._make_sprite('select', self.fg, False)
-        self.start_spr = self._make_sprite('start', self.fg, False)
-        self.stick_spr = self._make_sprite('stick', self.fg)
-        self.a_spr = self._make_sprite('a', self.fg, False)
-        self.b_spr = self._make_sprite('b', self.fg, False)
-        self.x_spr = self._make_sprite('x', self.fg, False)
-        self.y_spr = self._make_sprite('y', self.fg, False)
-        self.rb_spr = self._make_sprite('rb', self.fg, False)
-        self.lb_spr = self._make_sprite('lb', self.fg, False)
-        self.rt_spr = self._make_sprite('rt', self.fg, False)
-        self.lt_spr = self._make_sprite('lt', self.fg, False)
+        """
+        Create all sprites using helper function (name, batch, group,
+        visible)
+        """
+        self.background = self._make_sprite("background", self.bg)
+        self.select_spr = self._make_sprite("select", self.fg, False)
+        self.start_spr = self._make_sprite("start", self.fg, False)
+        self.stick_spr = self._make_sprite("stick", self.fg)
+        self.a_spr = self._make_sprite("a", self.fg, False)
+        self.b_spr = self._make_sprite("b", self.fg, False)
+        self.x_spr = self._make_sprite("x", self.fg, False)
+        self.y_spr = self._make_sprite("y", self.fg, False)
+        self.rb_spr = self._make_sprite("rb", self.fg, False)
+        self.lb_spr = self._make_sprite("lb", self.fg, False)
+        self.rt_spr = self._make_sprite("rt", self.fg, False)
+        self.lt_spr = self._make_sprite("lt", self.fg, False)
 
-    # Math to draw stick inputs in their correct location.
     def on_stick_motion(self, controller, stick, vector):
+        """
+        Math to draw stick inputs in their correct location
+        """
         assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             center_x, center_y = self.layout["stick"]
@@ -153,8 +193,10 @@ class TraditionalScene(LayoutScene):
                 center_y += vector.y * 50
             self.stick_spr.position = center_x, center_y, 0
 
-    # Math to draw dpad inputs in their correct location.
     def on_dpad_motion(self, controller, vector):
+        """
+        Math to draw dpad inputs in their correct location
+        """
         assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
         center_x, center_y = self.layout["stick"]
         center_x += vector.x * 50
@@ -165,30 +207,43 @@ class TraditionalScene(LayoutScene):
 class LeverlessScene(LayoutScene):
     """
     Leverless layout scene, all fightstick events wired up
+    
+    :param layout: Layout mapping
+    :type layout: dict
+    :param images: Images mapping
+    :type images: dict
     """
     def __init__(self, layout, images):
+        """
+        Constructor
+        """
         super().__init__(layout, images)
 
     def _init_layout(self):
-        # Create all sprites using helper function (name, batch, group, visible).
-        self.background = self._make_sprite('background', self.bg)
-        self.select_spr = self._make_sprite('select', self.fg, False)
-        self.start_spr = self._make_sprite('start', self.fg, False)
+        """
+        Create all sprites using helper function (name, batch, group,
+        visible)
+        """
+        self.background = self._make_sprite("background", self.bg)
+        self.select_spr = self._make_sprite("select", self.fg, False)
+        self.start_spr = self._make_sprite("start", self.fg, False)
         self.up_spr = self._make_sprite("up", self.fg, False)
         self.down_spr = self._make_sprite("down", self.fg, False)
         self.left_spr = self._make_sprite("left", self.fg, False)
         self.right_spr = self._make_sprite("right", self.fg, False)
-        self.a_spr = self._make_sprite('a', self.fg, False)
-        self.b_spr = self._make_sprite('b', self.fg, False)
-        self.x_spr = self._make_sprite('x', self.fg, False)
-        self.y_spr = self._make_sprite('y', self.fg, False)
-        self.rb_spr = self._make_sprite('rb', self.fg, False)
-        self.lb_spr = self._make_sprite('lb', self.fg, False)
-        self.rt_spr = self._make_sprite('rt', self.fg, False)
-        self.lt_spr = self._make_sprite('lt', self.fg, False)
+        self.a_spr = self._make_sprite("a", self.fg, False)
+        self.b_spr = self._make_sprite("b", self.fg, False)
+        self.x_spr = self._make_sprite("x", self.fg, False)
+        self.y_spr = self._make_sprite("y", self.fg, False)
+        self.rb_spr = self._make_sprite("rb", self.fg, False)
+        self.lb_spr = self._make_sprite("lb", self.fg, False)
+        self.rt_spr = self._make_sprite("rt", self.fg, False)
+        self.lt_spr = self._make_sprite("lt", self.fg, False)
 
-    # Have the stick inputs alert the main window to draw the sprites.
     def on_stick_motion(self, controller, stick, vector):
+        """
+        Have the stick inputs alert the main window to draw the sprites
+        """
         assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             self.up_spr.visible = vector.y > self.manager.stick_deadzone
@@ -196,8 +251,10 @@ class LeverlessScene(LayoutScene):
             self.left_spr.visible = vector.x < -self.manager.stick_deadzone
             self.right_spr.visible = vector.x > self.manager.stick_deadzone
 
-    # Have the dpad hats alert the main window to draw the sprites.
     def on_dpad_motion(self, controller, vector):
+        """
+        Have the dpad hats alert the main window to draw the sprites
+        """
         assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
         self.up_spr.visible = vector.y > 0
         self.down_spr.visible = vector.y < 0
@@ -206,15 +263,27 @@ class LeverlessScene(LayoutScene):
 
 
 class SceneManager:
-    """A Scene Management class.
+    """
+    A Scene Management class.
 
     The SceneManager is responsible for switching between
     the various scenes cleanly. This includes setting and
     removing Window and Controller events handlers. Global
     state (deadzone, etc.) is also defined here.
-
+    
+    :param window_instance: Window instance
+    :type window_instance: pyglet.window.xlib.XlibWindow
+    :param layout: Layout option, traditional or leverless
+    :type layout: str
+    :param config: Configuration
+    :type config: dict
     """
-    def __init__(self, window_instance, layout="traditional", config=DEFAULT):
+    def __init__(
+            self, window_instance, layout="traditional", config=DEFAULT
+    ):
+        """
+        Constructor
+        """
         self.window = window_instance
         self.window.push_handlers(self)
 
@@ -235,7 +304,7 @@ class SceneManager:
         if config_parser.read(layout_file):
             try:
                 for k, v in config_parser.items("layout"):
-                    x, y = v.split(', ')
+                    x, y = v.split(", ")
                     layout_conf[k] = int(x), int(y)
                 for k, v in config_parser.items("images"):
                     images_conf[k] = v
@@ -246,10 +315,14 @@ class SceneManager:
         self._scenes = {}
         self._current_scene = None
         if layout == "leverless":
-            self.add_scene('main', LeverlessScene(layout_conf, images_conf))
+            self.add_scene(
+                "main", LeverlessScene(layout_conf, images_conf)
+            )
         else:
-            self.add_scene('main', TraditionalScene(layout_conf, images_conf))
-        self.add_scene('retry', RetryScene())
+            self.add_scene(
+                "main", TraditionalScene(layout_conf, images_conf)
+            )
+        self.add_scene("retry", RetryScene())
 
         # Instantiation a ControllerManager to handle hot-plugging:
         self.controller_manager = pyglet.input.ControllerManager()
@@ -260,36 +333,48 @@ class SceneManager:
         controllers = self.controller_manager.get_controllers()
         if controllers:
             self.on_controller_connect(controllers[0])
-            self.set_scene('main')
+            self.set_scene("main")
         else:
-            self.set_scene('retry')
+            self.set_scene("retry")
 
         # Global state for all Scenes:
         self.stick_deadzone = config["stic"]
         self.trigger_deadzone = config["trig"]
 
-    # Detect if a controller is connected.
     def on_controller_connect(self, controller):
+        """
+        Detect if a controller is connected
+        """
         if not self.fightstick:
             controller.open()
             self.fightstick = controller
             self.fightstick.push_handlers(self._current_scene)
-            self.set_scene('main')
+            self.set_scene("main")
         else:
-            _debug_print(f"A Controller is already connected: {self.fightstick}")
+            _debug_print(
+                f"A Controller is already connected: {self.fightstick}"
+            )
 
-    # Detect if a controller is disconnected.
     def on_controller_disconnect(self, controller):
+        """
+        Detect if a controller is disconnected
+        """
         if self.fightstick == controller:
             self.fightstick.remove_handlers(self._current_scene)
             self.fightstick = None
-            self.set_scene('retry')
+            self.set_scene("retry")
 
     def add_scene(self, name, instance):
+        """
+        Add a scene
+        """
         instance.manager = self
         self._scenes[name] = instance
 
     def set_scene(self, name):
+        """
+        Set a scene
+        """
         if self._current_scene:
             self.window.remove_handlers(self._current_scene)
             self._current_scene.deactivate()
@@ -305,30 +390,53 @@ class SceneManager:
         self._current_scene.activate()
 
     def enforce_aspect_ratio(self, dt):
-        # Enforce aspect ratio by readjusting the window height.
+        """
+        Enforce aspect ratio by readjusting the window height
+        """
         aspect_ratio = 1.641025641
         target_width = int(self.window.height * aspect_ratio)
         target_height = int(self.window.width / aspect_ratio)
 
-        if self.window.width != target_width and self.window.height != target_height:
+        if (
+            self.window.width != target_width
+            and self.window.height != target_height
+        ):
             self.window.set_size(self.window.width, target_height)
 
-    # Window Events:
     def on_draw(self):
+        """
+        Draw
+        """
         self.window.clear()
         self._current_scene.batch.draw()
 
     def on_resize(self, width, height):
-        projection_matrix = Mat4.orthogonal_projection(0, width, 0, height, 0, 1)
+        """
+        Resize
+        """
+        projection_matrix = Mat4.orthogonal_projection(
+            0, width, 0, height, 0, 1
+        )
         scale_x = width / WINDOW_WIDTH
         scale_y = height / WINDOW_HEIGHT
-        self.window.projection = projection_matrix.scale(Vec3(scale_x, scale_y, 1))
+        self.window.projection = projection_matrix.scale(
+            Vec3(scale_x, scale_y, 1)
+        )
         self.window.viewport = 0, 0, width, height
         return pyglet.event.EVENT_HANDLED
 
 
-def run(layout, config):
-    # Create the main window. Use ConfigParser to set a static controller status of unplugged.
+def run(layout, config) -> None:
+    """
+    Run the fightstick app
+    
+    :param layout: Layout option, tradtional or leverless
+    :type layout: str
+    :param config: Configuration
+    :type config: dict
+    """
+    # Create the main window. Use ConfigParser to set a static
+    # controller status of unplugged
     window = pyglet.window.Window(
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
@@ -339,7 +447,11 @@ def run(layout, config):
     window.set_icon(pyglet.resource.image("icon.png"))
     _debug_print("Main window created")
 
-    scene_manager = SceneManager(window_instance=window, layout=layout, config=config)
+    scene_manager = SceneManager(
+        window_instance=window, layout=layout, config=config
+    )
     # Enforce aspect ratio by readjusting the window height.
-    pyglet.clock.schedule_interval(scene_manager.enforce_aspect_ratio, 0.3)
+    pyglet.clock.schedule_interval(
+        scene_manager.enforce_aspect_ratio, 0.3
+    )
     pyglet.app.run()
