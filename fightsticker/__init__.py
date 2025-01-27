@@ -4,7 +4,7 @@ from os.path import dirname, join
 from platformdirs import user_config_dir
 
 # Version
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 # Application name
 APPNAME = "Fightsticker"
 # Application ID
