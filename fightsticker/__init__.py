@@ -16,7 +16,6 @@ CONF = user_config_dir(APPNAME)
 # Default parameters
 DEFAULT = {
     "app": True,
-    "dbg": False,
     "stic": 0.2,
     "trig": 0.8,
     "trad": "",
@@ -135,10 +134,9 @@ def validate_config(filename, default="RESET"):
         config[key] = default_config[key]
         overwrite = True
     # Validate config options
-    for k in ["app", "dbg"]:
-        if not isinstance(config[k], int):
-            config[k] = default_config[k]
-            overwrite = True
+    if not isinstance(config["app"], int):
+        config[k] = default_config["app"]
+        overwrite = True
     # Overwrite filename if there is an error
     if overwrite:
         with open(join(CONF, filename), "w") as c:
