@@ -127,7 +127,7 @@ class Preferences(Gtk.Window):
 
     def on_trad_clicked(self, button):
         """
-        Open dialog to choose word list
+        Open dialog to choose the traditional configuration file
         
         :param button: Button
         :type button: Gtk.Button
@@ -163,7 +163,7 @@ class Preferences(Gtk.Window):
 
     def on_leve_clicked(self, button):
         """
-        Open dialog to choose word list
+        Open dialog to choose the leverless configuration file
         
         :param button: Button
         :type button: Gtk.Button

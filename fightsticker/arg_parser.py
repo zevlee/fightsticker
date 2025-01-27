@@ -22,6 +22,13 @@ class ArgParser(ArgumentParser):
             version=f"Fightsticker {__version__}"
         )
         self.add_argument(
+            "-d", "--debug",
+            action="store_true",
+            help="Enable debug mode",
+            dest="DEBUG",
+            default=False
+        )
+        self.add_argument(
             "-t", "--traditional",
             action="store_true",
             help="Display traditional layout",

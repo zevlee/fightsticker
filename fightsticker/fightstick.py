@@ -13,17 +13,19 @@ from . import LAYOUT_TRADITIONAL as L_TRA
 from . import IMAGES_TRADITIONAL as I_TRA
 from . import LAYOUT_LEVERLESS as L_LEV
 from . import IMAGES_LEVERLESS as I_LEV
+from .arg_parser import ArgParser
 
 # Set up the debugging flag calls.
-_debug_flag = len(argv) > 1 and argv[1] in ('-D', '-d', '--debug')
-_debug_print = debug_print(_debug_flag)
+parser = ArgParser()
+args = argv[1:]
+option = parser.parse_args(args)
+_debug_print = debug_print(option.DEBUG)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
 pyglet.resource.path.append(join(CONF, "theme"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
-_debug_print("Main window created")
 
 
 class _BaseScene:
@@ -145,7 +147,7 @@ class TraditionalScene(LayoutScene):
     def on_stick_motion(self, controller, stick, vector):
         assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
-            center_x, center_y = self.layout['stick']
+            center_x, center_y = self.layout["stick"]
             if vector.length() > self.manager.stick_deadzone:
                 center_x += vector.x * 50
                 center_y += vector.y * 50
@@ -154,7 +156,7 @@ class TraditionalScene(LayoutScene):
     # Math to draw dpad inputs in their correct location.
     def on_dpad_motion(self, controller, vector):
         assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
-        center_x, center_y = self.layout["stic"]
+        center_x, center_y = self.layout["stick"]
         center_x += vector.x * 50
         center_y += vector.y * 50
         self.stick_spr.position = center_x, center_y, 0
@@ -335,6 +337,7 @@ def run(layout, config):
         vsync=False
     )
     window.set_icon(pyglet.resource.image("icon.png"))
+    _debug_print("Main window created")
 
     scene_manager = SceneManager(window_instance=window, layout=layout, config=config)
     # Enforce aspect ratio by readjusting the window height.
