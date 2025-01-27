@@ -2,7 +2,7 @@ from json import dumps
 from os import mkdir
 from os.path import exists, join
 from platform import system
-from shutil import copytree
+from shutil import copy, copytree
 
 from gi import require_versions
 require_versions({"Gtk": "4.0", "Adw": "1"})
@@ -50,6 +50,12 @@ class Application(Adw.Application):
                 join(APPDIR, "layouts"),
                 join(CONF, "layouts")
             )
+        for file in ("traditional.original.ini", "leverless.original.ini"):
+            if not exists(join(CONF, "layouts", file)):
+                copy(
+                    join(APPDIR, "layouts", file),
+                    join(CONF, "layouts")
+                )
         if not exists(join(CONF, "default.json")):
             with open(join(CONF, "default.json"), "w") as d:
                 d.write(dumps(DEFAULT))

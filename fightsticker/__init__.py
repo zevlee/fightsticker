@@ -17,8 +17,10 @@ CONF = user_config_dir(APPNAME)
 DEFAULT = {
     "app": True,
     "dbg": False,
-    "stick": 0.2,
-    "trigger": 0.8
+    "stic": 0.2,
+    "trig": 0.8,
+    "trad": "",
+    "leve": ""
 }
 # Available layouts
 LAYOUTS = ("Traditional", "Leverless")
