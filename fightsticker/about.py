@@ -25,7 +25,10 @@ class About(Gtk.AboutDialog):
             transient_for=parent,
             program_name=APPNAME,
             version=__version__,
-            copyright="Copyright © 2024-2025 Zev Lee",
+            copyright=(
+                "Copyright © 2024-2025 Zev Lee\n"
+                "Copyright © 2017-2024 calexil"
+            ),
             license_type=Gtk.License.GPL_3_0,
             website="https://github.com/zevlee/fightsticker",
             website_label="Homepage"
