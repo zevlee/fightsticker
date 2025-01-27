@@ -90,10 +90,6 @@ class Preferences(Gtk.Window):
         self.app = Gtk.CheckButton(label="Dark Mode")
         self.app.set_active(self.config["app"])
 
-        # Debug mode check button
-        self.dbg = Gtk.CheckButton(label="Debug Mode")
-        self.dbg.set_active(self.config["dbg"])
-
         # Restore defaults button
         restore_button = Gtk.Button(label="Restore Defaults")
         restore_button.connect("clicked", self.on_restore_clicked)
@@ -113,7 +109,6 @@ class Preferences(Gtk.Window):
             [leve],
             [self.leve, leve_button],
             [self.app],
-            [self.dbg],
             [restore_button],
             [cancel_button, save_button]
         ]
@@ -205,7 +200,6 @@ class Preferences(Gtk.Window):
         :type button: Gtk.Button
         """
         self.app.set_active(DEFAULT["app"])
-        self.dbg.set_active(DEFAULT["dbg"])
         self.stic.set_text(str(DEFAULT["stic"]))
         self.trig.set_text(str(DEFAULT["trig"]))
         self.trad.set_text(str(DEFAULT["trad"]))
@@ -230,7 +224,6 @@ class Preferences(Gtk.Window):
         # Save preferences
         with open(join(CONF, "settings.json"), "w") as c:
             self.config["app"] = self.app.get_active()
-            self.config["dbg"] = self.dbg.get_active()
             self.config["stic"] = float(self.stic.get_text())
             self.config["trig"] = float(self.trig.get_text())
             self.config["trad"] = self.trad.get_text()
