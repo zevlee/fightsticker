@@ -450,7 +450,7 @@ def run(layout, config) -> None:
     scene_manager = SceneManager(
         window_instance=window, layout=layout, config=config
     )
-    # Enforce aspect ratio by readjusting the window height.
+    # Enforce aspect ratio by readjusting the window height
     pyglet.clock.schedule_interval(
         scene_manager.enforce_aspect_ratio, 0.3
     )

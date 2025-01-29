@@ -112,10 +112,8 @@ class Window(Gtk.ApplicationWindow):
         args = argv[1:]
         option = parser.parse_args(args)
         if option.TRADITIONAL:
-            self.close()
             run(layout="traditional", config=self.config)
         elif option.LEVERLESS:
-            self.close()
             run(layout="leverless", config=self.config)
 
     def on_prefs_clicked(self, action, param):
@@ -149,9 +147,5 @@ class Window(Gtk.ApplicationWindow):
         :param button: Button
         :type button: Gtk.Button
         """
-        self.close()
-        match self.dropdown.props.selected_item.props.string:
-            case "Traditional":
-                run(layout="traditional", config=self.config)
-            case "Leverless":
-                run(layout="leverless", config=self.config)
+        option = self.dropdown.props.selected_item.props.string
+        run(layout=option.lower(), config=self.config)
