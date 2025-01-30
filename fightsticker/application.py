@@ -40,10 +40,10 @@ class Application(Adw.Application):
         # Restore any missing files and folders
         if not exists(CONF):
             mkdir(CONF)
-        if not exists(join(CONF, "theme")):
+        if not exists(join(CONF, "images")):
             copytree(
-                join(APPDIR, "theme"),
-                join(CONF, "theme")
+                join(APPDIR, "images"),
+                join(CONF, "images")
             )
         if not exists(join(CONF, "layouts")):
             copytree(
