@@ -23,7 +23,7 @@ _debug_print = debug_print(option.DEBUG)
 _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
-pyglet.resource.path.append(join(CONF, "theme"))
+pyglet.resource.path.append(join(CONF, "images"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
@@ -444,7 +444,6 @@ def run(layout, config) -> None:
         resizable=True,
         vsync=False
     )
-    window.set_icon(pyglet.resource.image("icon.png"))
     _debug_print("Main window created")
 
     scene_manager = SceneManager(
