@@ -13,7 +13,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('LICENSE', '.'),
-        ('theme', 'theme'),
+        ('images', 'images'),
         ('layouts', 'layouts'),
         ('gui', 'gui'),
         ('linux/icons', 'usr/share/icons'),
