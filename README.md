@@ -21,8 +21,7 @@ preferred operating system.
 
 ### Graphical User Interface
 
-<img src="screenshots/main.png" alt="Main window" height="350"/>
-<img src="screenshots/preferences.png" alt="Main window" height="350"/>
+<img src="screenshots/main.png" alt="Main window" height="350"/><img src="screenshots/preferences.png" alt="Main window" height="350"/>
 
 Upon starting the program, users are greeted with a user-friendly interface
 from which they can launch the layout of their choice.
@@ -37,8 +36,7 @@ upon being activated.
 
 ### Default Layouts 
 
-<img src="screenshots/traditional.png" alt="Main window" width="320"/>
-<img src="screenshots/leverless.png" alt="Main window" width="320"/>
+<img src="screenshots/traditional.png" alt="Main window" width="320"/><img src="screenshots/leverless.png" alt="Main window" width="320"/>
 
 The default layouts feature an all-green background, as they are intended to be
 chroma-keyed out using streaming software.
