@@ -57,6 +57,6 @@ uses the latest version and keeps it as a separate dependency. The package
 ### Structure
 
 The `fightstick.py` and `fightstick_hb.py` files have been combined. There are
-now `LeverlessScene` and `TraditionalScene` classes which inherit from a
+now `TraditionalScene` and `LeverlessScene` classes which inherit from a
 general `LayoutScene` class where common methods between the two layouts are
 stored.
