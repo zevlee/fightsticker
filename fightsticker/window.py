@@ -148,4 +148,4 @@ class Window(Gtk.ApplicationWindow):
         :type button: Gtk.Button
         """
         option = self.dropdown.props.selected_item.props.string
-        run(layout=option.lower(), config=self.config)
+        run(layout=option.lower(), config=self.config, parent=self)

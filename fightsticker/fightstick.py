@@ -426,7 +426,7 @@ class SceneManager:
         return pyglet.event.EVENT_HANDLED
 
 
-def run(layout, config) -> None:
+def run(layout, config, parent=None) -> None:
     """
     Run the fightstick app
     
@@ -434,6 +434,8 @@ def run(layout, config) -> None:
     :type layout: str
     :param config: Configuration
     :type config: dict
+    :param parent: Parent window
+    :type parent: Gtk.Window
     """
     # Create the main window. Use ConfigParser to set a static
     # controller status of unplugged
@@ -445,6 +447,10 @@ def run(layout, config) -> None:
         vsync=False
     )
     _debug_print("Main window created")
+    # Close the parent window. We put the window closing here so that
+    # the pyglet window inherits the icon of the application
+    if parent:
+        parent.close()
 
     scene_manager = SceneManager(
         window_instance=window, layout=layout, config=config
