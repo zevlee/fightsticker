@@ -9,7 +9,6 @@ from gi.repository import Gtk, Gio
 from . import *
 from .about import About
 from .preferences import Preferences
-from .arg_parser import ArgParser
 from .fightstick import run
 
 
@@ -106,15 +105,6 @@ class Window(Gtk.ApplicationWindow):
 
         # Open stored preferences
         self.config = read_config("settings.json")
-
-        # Command line arguments
-        parser = ArgParser()
-        args = argv[1:]
-        option = parser.parse_args(args)
-        if option.TRADITIONAL:
-            run(layout="traditional", config=self.config)
-        elif option.LEVERLESS:
-            run(layout="leverless", config=self.config)
 
     def on_prefs_clicked(self, action, param):
         """

@@ -28,17 +28,3 @@ class ArgParser(ArgumentParser):
             dest="DEBUG",
             default=False
         )
-        self.add_argument(
-            "-t", "--traditional",
-            action="store_true",
-            help="Display traditional layout",
-            dest="TRADITIONAL",
-            default=False
-        )
-        self.add_argument(
-            "-l", "--leverless",
-            action="store_true",
-            help="Display leverless layout",
-            dest="LEVERLESS",
-            default=False
-        )
