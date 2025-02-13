@@ -393,7 +393,7 @@ class SceneManager:
         """
         Enforce aspect ratio by readjusting the window height
         """
-        aspect_ratio = 1.641025641
+        aspect_ratio = WINDOW_WIDTH / WINDOW_HEIGHT
         target_width = int(self.window.height * aspect_ratio)
         target_height = int(self.window.width / aspect_ratio)
 
@@ -451,7 +451,7 @@ def run(layout, config, parent=None) -> None:
     # the pyglet window inherits the icon of the application
     if parent:
         parent.close()
-
+    # Instantiate the scene manager
     scene_manager = SceneManager(
         window_instance=window, layout=layout, config=config
     )
@@ -459,4 +459,5 @@ def run(layout, config, parent=None) -> None:
     pyglet.clock.schedule_interval(
         scene_manager.enforce_aspect_ratio, 0.3
     )
+    # Run the application
     pyglet.app.run()

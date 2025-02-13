@@ -28,28 +28,30 @@ LAYOUT_TRADITIONAL = {
     "background": (0, 0),
     "select": (50, 318),
     "start": (50, 318),
-    "stick": (118, 153),
-    "a": (256, 83),
-    "b": (336, 113),
-    "x": (275, 173),
-    "y": (354, 203),
-    "rb": (440, 202),
-    "lb": (527, 199),
-    "rt": (421, 112),
-    "lt": (507, 109),
+    "guide": (50, 318),
+    "stick": (83, 155),
+    "x": (303, 201),
+    "y": (388, 231),
+    "rb": (477, 219),
+    "lb": (567, 191),
+    "a": (294, 102),
+    "b": (379, 133),
+    "rt": (468, 121),
+    "lt": (557, 93),
 }
 # Traditional layout images
 IMAGES_TRADITIONAL = {
     "background": "background.png",
     "select": "transparent.png",
     "start": "transparent.png",
+    "guide": "transparent.png",
     "stick": "button.png",
-    "a": "button.png",
-    "b": "button.png",
     "x": "button.png",
     "y": "button.png",
     "rb": "button.png",
     "lb": "button.png",
+    "a": "button.png",
+    "b": "button.png",
     "rt": "button.png",
     "lt": "button.png",
 }
@@ -58,6 +60,7 @@ LAYOUT_LEVERLESS = {
     "background": (0, 0),
     "select": (50, 318),
     "start": (50, 318),
+    "guide": (50, 318),
     "up": (237, 10),
     "down": (133, 217),
     "left": (47, 217),
@@ -76,6 +79,7 @@ IMAGES_LEVERLESS = {
     "background": "backgroundlv.png",
     "select": "transparent.png",
     "start": "transparent.png",
+    "guide": "transparent.png",
     "up": "buttonlvlg.png",
     "down": "buttonlv.png",
     "left": "buttonlv.png",
@@ -90,7 +94,7 @@ IMAGES_LEVERLESS = {
     "lt": "buttonlv.png",
 }
 # Window width
-WINDOW_WIDTH = 640
+WINDOW_WIDTH = 680
 # Window height
 WINDOW_HEIGHT = 390
 
