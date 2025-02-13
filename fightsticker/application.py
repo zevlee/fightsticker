@@ -22,7 +22,7 @@ class Application(Adw.Application):
         """
         super().__init__(
             application_id=ID,
-            flags=Gio.ApplicationFlags.DEFAULT_FLAGS
+            flags=Gio.ApplicationFlags.FLAGS_NONE
         )
 
         # Set application name
