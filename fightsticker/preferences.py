@@ -87,8 +87,8 @@ class Preferences(Gtk.Window):
         leve_button.connect("clicked", self.on_leve_clicked)
 
         # Appearance check button
-        self.app = Gtk.CheckButton(label="Dark Mode")
-        self.app.set_active(self.config["app"])
+        self.dark = Gtk.CheckButton(label="Dark Mode")
+        self.dark.set_active(self.config["dark"])
 
         # Restore defaults button
         restore_button = Gtk.Button(label="Restore Defaults")
@@ -108,7 +108,7 @@ class Preferences(Gtk.Window):
             [self.trad, trad_button],
             [leve],
             [self.leve, leve_button],
-            [self.app],
+            [self.dark],
             [restore_button],
             [cancel_button, save_button]
         ]
@@ -199,7 +199,7 @@ class Preferences(Gtk.Window):
         :param button: Button
         :type button: Gtk.Button
         """
-        self.app.set_active(DEFAULT["app"])
+        self.dark.set_active(DEFAULT["dark"])
         self.stic.set_text(str(DEFAULT["stic"]))
         self.trig.set_text(str(DEFAULT["trig"]))
         self.trad.set_text(str(DEFAULT["trad"]))
@@ -223,7 +223,7 @@ class Preferences(Gtk.Window):
         """
         # Save preferences
         with open(join(CONF, "settings.json"), "w") as c:
-            self.config["app"] = self.app.get_active()
+            self.config["dark"] = self.dark.get_active()
             self.config["stic"] = float(self.stic.get_text())
             self.config["trig"] = float(self.trig.get_text())
             self.config["trad"] = self.trad.get_text()
@@ -232,7 +232,7 @@ class Preferences(Gtk.Window):
             c.close()
         # Set color scheme
         application = self.get_transient_for().get_application()
-        if self.app.get_active():
+        if self.dark.get_active():
             application.get_style_manager().set_color_scheme(
                 Adw.ColorScheme.FORCE_DARK
             )

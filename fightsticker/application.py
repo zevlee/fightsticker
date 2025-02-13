@@ -71,7 +71,7 @@ class Application(Adw.Application):
         validate_config("settings.json", "default.json")
 
         # Set color scheme
-        appearance = read_config("settings.json")["app"]
+        appearance = read_config("settings.json")["dark"]
         if appearance:
             self.get_style_manager().set_color_scheme(
                 Adw.ColorScheme.FORCE_DARK

@@ -15,7 +15,7 @@ APPDIR = dirname(dirname(__file__))
 CONF = user_config_dir(APPNAME)
 # Default parameters
 DEFAULT = {
-    "app": True,
+    "dark": True,
     "stic": 0.2,
     "trig": 0.8,
     "trad": "",
@@ -138,8 +138,8 @@ def validate_config(filename, default="RESET"):
         config[key] = default_config[key]
         overwrite = True
     # Validate config options
-    if not isinstance(config["app"], int):
-        config[k] = default_config["app"]
+    if not isinstance(config["dark"], int):
+        config[k] = default_config["dark"]
         overwrite = True
     # Overwrite filename if there is an error
     if overwrite:
