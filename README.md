@@ -36,7 +36,7 @@ upon being activated.
 
 ### Default Layouts 
 
-<img src="screenshots/traditional.png" alt="Main window" width="320"/><img src="screenshots/leverless.png" alt="Main window" width="320"/>
+<img src="screenshots/traditional.png" alt="Main window" width="340"/><img src="screenshots/leverless.png" alt="Main window" width="340"/>
 
 The default layouts feature an all-green background, as they are intended to be
 chroma-keyed out using streaming software.
