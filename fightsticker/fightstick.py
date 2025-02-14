@@ -199,8 +199,8 @@ class TraditionalScene(LayoutScene):
         """
         assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
         center_x, center_y = self.layout["stick"]
-        center_x += vector.x * 50
-        center_y += vector.y * 50
+        center_x += vector.normalize().x * 50
+        center_y += vector.normalize().y * 50
         self.stick_spr.position = center_x, center_y, 0
 
 
