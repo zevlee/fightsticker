@@ -71,16 +71,17 @@ class LayoutScene(_BaseScene):
         self._init_layout()
         # Mapping of (Input names : Sprite names)
         self.button_mapping = {
-            "a": self.a_spr,
-            "b": self.b_spr,
+            "back": self.select_spr,
+            "start": self.start_spr,
+            "guide": self.guide_spr,
             "x": self.x_spr,
             "y": self.y_spr,
             "rightshoulder": self.rb_spr,
             "leftshoulder": self.lb_spr,
+            "a": self.a_spr,
+            "b": self.b_spr,
             "righttrigger": self.rt_spr,
-            "lefttrigger": self.lt_spr,
-            "back": self.select_spr,
-            "start": self.start_spr
+            "lefttrigger": self.lt_spr
         }
 
     def _make_sprite(self, name, group, visible=True):
@@ -171,13 +172,14 @@ class TraditionalScene(LayoutScene):
         self.background = self._make_sprite("background", self.bg)
         self.select_spr = self._make_sprite("select", self.fg, False)
         self.start_spr = self._make_sprite("start", self.fg, False)
+        self.guide_spr = self._make_sprite("guide", self.fg, False)
         self.stick_spr = self._make_sprite("stick", self.fg)
-        self.a_spr = self._make_sprite("a", self.fg, False)
-        self.b_spr = self._make_sprite("b", self.fg, False)
         self.x_spr = self._make_sprite("x", self.fg, False)
         self.y_spr = self._make_sprite("y", self.fg, False)
         self.rb_spr = self._make_sprite("rb", self.fg, False)
         self.lb_spr = self._make_sprite("lb", self.fg, False)
+        self.a_spr = self._make_sprite("a", self.fg, False)
+        self.b_spr = self._make_sprite("b", self.fg, False)
         self.rt_spr = self._make_sprite("rt", self.fg, False)
         self.lt_spr = self._make_sprite("lt", self.fg, False)
 
@@ -227,16 +229,17 @@ class LeverlessScene(LayoutScene):
         self.background = self._make_sprite("background", self.bg)
         self.select_spr = self._make_sprite("select", self.fg, False)
         self.start_spr = self._make_sprite("start", self.fg, False)
+        self.guide_spr = self._make_sprite("guide", self.fg, False)
         self.up_spr = self._make_sprite("up", self.fg, False)
         self.down_spr = self._make_sprite("down", self.fg, False)
         self.left_spr = self._make_sprite("left", self.fg, False)
         self.right_spr = self._make_sprite("right", self.fg, False)
-        self.a_spr = self._make_sprite("a", self.fg, False)
-        self.b_spr = self._make_sprite("b", self.fg, False)
         self.x_spr = self._make_sprite("x", self.fg, False)
         self.y_spr = self._make_sprite("y", self.fg, False)
         self.rb_spr = self._make_sprite("rb", self.fg, False)
         self.lb_spr = self._make_sprite("lb", self.fg, False)
+        self.a_spr = self._make_sprite("a", self.fg, False)
+        self.b_spr = self._make_sprite("b", self.fg, False)
         self.rt_spr = self._make_sprite("rt", self.fg, False)
         self.lt_spr = self._make_sprite("lt", self.fg, False)
 
