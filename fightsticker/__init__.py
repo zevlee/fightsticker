@@ -26,9 +26,9 @@ LAYOUTS = ("Traditional", "Leverless")
 # Traditional layout parameters
 LAYOUT_TRADITIONAL = {
     "background": (0, 0),
-    "select": (33, 318),
-    "start": (33, 318),
-    "guide": (33, 318),
+    "select": (33, 321),
+    "start": (33, 321),
+    "guide": (33, 321),
     "stick": (83, 155),
     "x": (303, 201),
     "y": (388, 231),
@@ -58,9 +58,9 @@ IMAGES_TRADITIONAL = {
 # Leverless layout parameters
 LAYOUT_LEVERLESS = {
     "background": (0, 0),
-    "select": (33, 318),
-    "start": (33, 318),
-    "guide": (33, 318),
+    "select": (33, 321),
+    "start": (33, 321),
+    "guide": (33, 321),
     "up": (296, 19),
     "down": (187, 209),
     "left": (105, 209),
