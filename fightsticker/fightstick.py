@@ -190,9 +190,15 @@ class TraditionalScene(LayoutScene):
         assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             center_x, center_y = self.layout["stick"]
-            if vector.length() > self.manager.stick_deadzone:
+            if 1 > vector.length() > self.manager.stick_deadzone:
                 center_x += vector.x * 50
                 center_y += vector.y * 50
+            elif vector.length() > self.manager.stick_deadzone:
+                # Normalize the vector if its length exceeds 1.0,
+                # capping the distance from the center to a max of 50
+                # in all directions
+                center_x += vector.normalize().x * 50
+                center_y += vector.normalize().y * 50
             self.stick_spr.position = center_x, center_y, 0
 
     def on_dpad_motion(self, controller, vector):
