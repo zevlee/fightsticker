@@ -86,6 +86,15 @@ class Preferences(Gtk.Window):
         leve_button = Gtk.Button(label="Choose File")
         leve_button.connect("clicked", self.on_leve_clicked)
 
+        # Pad layout configuration file label, entry field, and
+        # file chooser button
+        pad = Gtk.Label(halign=Gtk.Align.START)
+        pad.set_markup("Pad Layout Configuration File")
+        self.pad = Gtk.Entry()
+        self.pad.set_text(str(self.config["pad"]))
+        pad_button = Gtk.Button(label="Choose File")
+        pad_button.connect("clicked", self.on_pad_clicked)
+
         # Appearance check button
         self.dark = Gtk.CheckButton(label="Dark Mode")
         self.dark.set_active(self.config["dark"])
@@ -108,6 +117,8 @@ class Preferences(Gtk.Window):
             [self.trad, trad_button],
             [leve],
             [self.leve, leve_button],
+            [pad],
+            [self.pad, pad_button],
             [self.dark],
             [restore_button],
             [cancel_button, save_button]
@@ -192,6 +203,42 @@ class Preferences(Gtk.Window):
             self.leve.set_text(Gio.File.get_path(dialog.get_file()))
         dialog.destroy()
 
+    def on_pad_clicked(self, button):
+        """
+        Open dialog to choose the pad configuration file
+        
+        :param button: Button
+        :type button: Gtk.Button
+        """
+        dialog = Gtk.FileChooserDialog(
+            title="Choose the pad configuration file",
+            transient_for=self,
+            modal=True,
+            action=Gtk.FileChooserAction.OPEN
+        )
+        dialog.add_buttons(
+            "_Cancel", Gtk.ResponseType.CANCEL,
+            "_Open", Gtk.ResponseType.OK,
+        )
+        dialog.set_current_folder(
+            Gio.File.new_for_path(join(CONF, "layouts"))
+        )
+        dialog.connect("response", self._select_pad_file)
+        dialog.show()
+
+    def _select_pad_file(self, dialog, response):
+        """
+        Set file when chosen in dialog
+        
+        :param dialog: Dialog
+        :type dialog: Gtk.FileChooserDialog
+        :param response: Response from user
+        :type response: int
+        """
+        if response == Gtk.ResponseType.OK:
+            self.pad.set_text(Gio.File.get_path(dialog.get_file()))
+        dialog.destroy()
+
     def on_restore_clicked(self, button):
         """
         Restore default values
@@ -204,6 +251,7 @@ class Preferences(Gtk.Window):
         self.trig.set_text(str(DEFAULT["trig"]))
         self.trad.set_text(str(DEFAULT["trad"]))
         self.leve.set_text(str(DEFAULT["leve"]))
+        self.pad.set_text(str(DEFAULT["pad"]))
 
     def on_cancel_clicked(self, button):
         """
@@ -228,6 +276,7 @@ class Preferences(Gtk.Window):
             self.config["trig"] = float(self.trig.get_text())
             self.config["trad"] = self.trad.get_text()
             self.config["leve"] = self.leve.get_text()
+            self.config["pad"] = self.pad.get_text()
             c.write(dumps(self.config))
             c.close()
         # Set color scheme

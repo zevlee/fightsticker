@@ -50,7 +50,11 @@ class Application(Adw.Application):
                 join(APPDIR, "layouts"),
                 join(CONF, "layouts")
             )
-        for file in ("traditional.original.ini", "leverless.original.ini"):
+        for file in (
+            "traditional.ini", "traditional.original.ini",
+            "leverless.ini", "leverless.original.ini",
+            "pad.ini", "pad.original.ini"
+        ):
             if not exists(join(CONF, "layouts", file)):
                 copy(
                     join(APPDIR, "layouts", file),
