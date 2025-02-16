@@ -13,6 +13,8 @@ from . import LAYOUT_TRADITIONAL as L_TRA
 from . import IMAGES_TRADITIONAL as I_TRA
 from . import LAYOUT_LEVERLESS as L_LEV
 from . import IMAGES_LEVERLESS as I_LEV
+from . import LAYOUT_PAD as L_PAD
+from . import IMAGES_PAD as I_PAD
 from .arg_parser import ArgParser
 
 # Set up the debugging flag calls.
@@ -271,6 +273,101 @@ class LeverlessScene(LayoutScene):
         self.right_spr.visible = vector.x > 0
 
 
+class PadScene(LayoutScene):
+    """
+    Pad layout scene, all fightstick events wired up
+    
+    :param layout: Layout mapping
+    :type layout: dict
+    :param images: Images mapping
+    :type images: dict
+    """
+    def __init__(self, layout, images):
+        """
+        Constructor
+        """
+        super().__init__(layout, images)
+
+    def _init_layout(self):
+        """
+        Create all sprites using helper function (name, batch, group,
+        visible)
+        """
+        self.background = self._make_sprite("background", self.bg)
+        self.select_spr = self._make_sprite("select", self.fg, False)
+        self.start_spr = self._make_sprite("start", self.fg, False)
+        self.guide_spr = self._make_sprite("guide", self.fg, False)
+        self.leftstick_spr = self._make_sprite("leftstick", self.fg)
+        self.rightstick_spr = self._make_sprite("rightstick", self.fg)
+        self.up_spr = self._make_sprite("up", self.fg, False)
+        self.down_spr = self._make_sprite("down", self.fg, False)
+        self.left_spr = self._make_sprite("left", self.fg, False)
+        self.right_spr = self._make_sprite("right", self.fg, False)
+        self.diag_spr = self._make_sprite("diag", self.fg, False)
+        self.x_spr = self._make_sprite("x", self.fg, False)
+        self.y_spr = self._make_sprite("y", self.fg, False)
+        self.rb_spr = self._make_sprite("rb", self.fg, False)
+        self.lb_spr = self._make_sprite("lb", self.fg, False)
+        self.a_spr = self._make_sprite("a", self.fg, False)
+        self.b_spr = self._make_sprite("b", self.fg, False)
+        self.rt_spr = self._make_sprite("rt", self.fg, False)
+        self.lt_spr = self._make_sprite("lt", self.fg, False)
+
+    def on_stick_motion(self, controller, stick, vector):
+        """
+        Math to draw stick inputs in their correct location
+        """
+        assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
+        center_x, center_y = self.layout[stick]
+        if 1 > vector.length() > self.manager.stick_deadzone:
+            center_x += vector.x * 45
+            center_y += vector.y * 45
+        elif vector.length() > self.manager.stick_deadzone:
+            # Normalize the vector if its length exceeds 1.0,
+            # capping the distance from the center to a max of 45
+            # in all directions
+            center_x += vector.normalize().x * 45
+            center_y += vector.normalize().y * 45
+        if stick == "leftstick":
+            self.leftstick_spr.position = center_x, center_y, 0
+        else:
+            self.rightstick_spr.position = center_x, center_y, 0
+
+    def on_dpad_motion(self, controller, vector):
+        """
+        Have the dpad hats alert the main window to draw the sprites
+        """
+        assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
+        self.up_spr.visible = vector.y > 0
+        self.down_spr.visible = vector.y < 0
+        self.left_spr.visible = vector.x < 0
+        self.right_spr.visible = vector.x > 0
+        # Initialize diagonal sprite position parameters
+        xpos, ypos = self.layout["diag"]
+        # Determine diagonal sprite orientation and position
+        if self.up_spr.visible and self.left_spr.visible:
+            self.diag_spr.rotation = 0
+            self.diag_spr.position = xpos, ypos, 0
+        elif self.up_spr.visible and self.right_spr.visible:
+            self.diag_spr.rotation = 90
+            self.diag_spr.position = xpos, ypos + 34, 0
+        elif self.down_spr.visible and self.right_spr.visible:
+            self.diag_spr.rotation = 180
+            self.diag_spr.position = xpos + 34, ypos + 34, 0
+        elif self.down_spr.visible and self.left_spr.visible:
+            self.diag_spr.rotation = 270
+            self.diag_spr.position = xpos + 34, ypos, 0
+        # Now display the diagonal sprite if x- and y-axis sprites are
+        # simultaneously active
+        if (
+            (self.up_spr.visible or self.down_spr.visible)
+            and (self.left_spr.visible or self.right_spr.visible)
+        ):
+            self.diag_spr.visible = True
+        else:
+            self.diag_spr.visible = False            
+
+
 class SceneManager:
     """
     A Scene Management class.
@@ -304,7 +401,10 @@ class SceneManager:
         config_parser.add_section("images")
         # Read the layout file
         layout_file = config[layout[:4]]
-        if layout == "leverless":
+        if layout == "pad":
+            layout_conf = L_PAD
+            images_conf = I_PAD
+        elif layout == "leverless":
             layout_conf = L_LEV
             images_conf = I_LEV
         else:
@@ -323,7 +423,11 @@ class SceneManager:
         # Set up Scene instances:
         self._scenes = {}
         self._current_scene = None
-        if layout == "leverless":
+        if layout == "pad":
+            self.add_scene(
+                "main", PadScene(layout_conf, images_conf)
+            )
+        elif layout == "leverless":
             self.add_scene(
                 "main", LeverlessScene(layout_conf, images_conf)
             )

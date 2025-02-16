@@ -4,7 +4,7 @@ from os.path import dirname, join
 from platformdirs import user_config_dir
 
 # Version
-__version__ = "0.11.0"
+__version__ = "0.12.0"
 # Application name
 APPNAME = "Fightsticker"
 # Application ID
@@ -19,10 +19,11 @@ DEFAULT = {
     "stic": 0.2,
     "trig": 0.8,
     "trad": "",
-    "leve": ""
+    "leve": "",
+    "pad": ""
 }
 # Available layouts
-LAYOUTS = ("Traditional", "Leverless")
+LAYOUTS = ("Traditional", "Leverless", "Pad")
 # Traditional layout parameters
 LAYOUT_TRADITIONAL = {
     "background": (0, 0),
@@ -37,7 +38,7 @@ LAYOUT_TRADITIONAL = {
     "a": (294, 102),
     "b": (379, 133),
     "rt": (468, 121),
-    "lt": (557, 93),
+    "lt": (557, 93)
 }
 # Traditional layout images
 IMAGES_TRADITIONAL = {
@@ -53,7 +54,7 @@ IMAGES_TRADITIONAL = {
     "a": "button.png",
     "b": "button.png",
     "rt": "button.png",
-    "lt": "button.png",
+    "lt": "button.png"
 }
 # Leverless layout parameters
 LAYOUT_LEVERLESS = {
@@ -72,7 +73,7 @@ LAYOUT_LEVERLESS = {
     "a": (331, 125),
     "b": (409, 156),
     "rt": (496, 156),
-    "lt": (578, 142),
+    "lt": (578, 142)
 }
 # Leverless layout images
 IMAGES_LEVERLESS = {
@@ -91,7 +92,51 @@ IMAGES_LEVERLESS = {
     "a": "buttonlv.png",
     "b": "buttonlv.png",
     "rt": "buttonlv.png",
-    "lt": "buttonlv.png",
+    "lt": "buttonlv.png"
+}
+# Pad layout parameters
+LAYOUT_PAD = {
+    "background": (0, 0),
+    "select": (270, 206),
+    "start": (370, 206),
+    "guide": (310, 166),
+    "leftstick": (219, 53),
+    "rightstick": (389, 53),
+    "up": (142, 203),
+    "down": (142, 135),
+    "left": (108, 169),
+    "right": (176, 169),
+    "diag": (142, 169),
+    "x": (461, 166),
+    "y": (501, 206),
+    "rb": (481, 283),
+    "lb": (119, 283),
+    "a": (501, 126),
+    "b": (541, 166),
+    "rt": (481, 323),
+    "lt": (119, 323)
+}
+# Pad layout images
+IMAGES_PAD = {
+    "background": "backgroundpd.png",
+    "select": "option.png",
+    "start": "option.png",
+    "guide": "guide.png",
+    "leftstick": "buttonlv.png",
+    "rightstick": "buttonlv.png",
+    "up": "dpad.png",
+    "down": "dpad.png",
+    "left": "dpad.png",
+    "right": "dpad.png",
+    "diag": "diag.png",
+    "x": "buttonpd.png",
+    "y": "buttonpd.png",
+    "rb": "bumper.png",
+    "lb": "bumper.png",
+    "a": "buttonpd.png",
+    "b": "buttonpd.png",
+    "rt": "trigger.png",
+    "lt": "trigger.png"
 }
 # Window width
 WINDOW_WIDTH = 680
