@@ -45,10 +45,8 @@ class RetryScene(_BaseScene):
     """
     def __init__(self):
         self.batch = pyglet.graphics.Batch()
-        self.missing_img = pyglet.resource.image("missing.png")
-        self.sprite = pyglet.sprite.Sprite(
-            img=pyglet.resource.image("missing.png"), batch=self.batch
-        )
+        img = pyglet.resource.image("missing.png")
+        self.sprite = pyglet.sprite.Sprite(img=img, batch=self.batch)
 
 
 class LayoutScene(_BaseScene):
