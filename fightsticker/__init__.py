@@ -4,7 +4,7 @@ from os.path import dirname, join
 from platformdirs import user_config_dir
 
 # Version
-__version__ = "0.12.1"
+__version__ = "0.12.2"
 # Application name
 APPNAME = "Fightsticker"
 # Application ID
@@ -106,7 +106,6 @@ LAYOUT_PAD = {
     "down": (142, 135),
     "left": (108, 169),
     "right": (176, 169),
-    "diag": (142, 169),
     "x": (461, 166),
     "y": (501, 206),
     "rb": (481, 283),
