@@ -344,20 +344,26 @@ class PadScene(LayoutScene):
         self.left_spr.visible = vector.x < 0
         self.right_spr.visible = vector.x > 0
         # Initialize diagonal sprite position parameters
-        xpos, ypos = self.layout["diag"]
+        xpos, ypos = self.layout["up"][0], self.layout["right"][1]
+        # Calculate the width and height of the diagonal sprite through
+        # the relationship with the position of the up and right
+        # sprites, as they represent the top left and bottom right
+        # corners of the sprite
+        diag_x = self.layout["right"][0] - self.layout["up"][0]
+        diag_y = self.layout["up"][1] - self.layout["right"][1]
         # Determine diagonal sprite orientation and position
         if self.up_spr.visible and self.left_spr.visible:
             self.diag_spr.rotation = 0
             self.diag_spr.position = xpos, ypos, 0
         elif self.up_spr.visible and self.right_spr.visible:
             self.diag_spr.rotation = 90
-            self.diag_spr.position = xpos, ypos + 34, 0
+            self.diag_spr.position = xpos, ypos + diag_y, 0
         elif self.down_spr.visible and self.right_spr.visible:
             self.diag_spr.rotation = 180
-            self.diag_spr.position = xpos + 34, ypos + 34, 0
+            self.diag_spr.position = xpos + diag_x, ypos + diag_y, 0
         elif self.down_spr.visible and self.left_spr.visible:
             self.diag_spr.rotation = 270
-            self.diag_spr.position = xpos + 34, ypos, 0
+            self.diag_spr.position = xpos + diag_x, ypos, 0
         # Now display the diagonal sprite if x- and y-axis sprites are
         # simultaneously active
         if (
