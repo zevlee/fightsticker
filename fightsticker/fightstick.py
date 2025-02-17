@@ -91,8 +91,14 @@ class LayoutScene(_BaseScene):
         """
         Helper function to make a Sprite
         """
-        image = pyglet.resource.image(self.images[name])
-        position = self.layout[name]
+        try:
+            image = pyglet.resource.image(self.images[name])
+        except KeyError:
+            image = "transparent.png"
+        try:
+            position = self.layout[name]
+        except KeyError:
+            position = 0, 0
         sprite = pyglet.sprite.Sprite(
             image, *position, batch=self.batch, group=group
         )
