@@ -191,27 +191,27 @@ class TraditionalScene(LayoutScene):
         """
         assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
-            center_x, center_y = self.layout["stick"]
+            xpos, ypos = self.layout["stick"]
             if 1 > vector.length() > self.manager.stick_deadzone:
-                center_x += vector.x * 50
-                center_y += vector.y * 50
+                xpos += vector.x * 50
+                ypos += vector.y * 50
             elif vector.length() > self.manager.stick_deadzone:
                 # Normalize the vector if its length exceeds 1.0,
                 # capping the distance from the center to a max of 50
                 # in all directions
-                center_x += vector.normalize().x * 50
-                center_y += vector.normalize().y * 50
-            self.stick_spr.position = center_x, center_y, 0
+                xpos += vector.normalize().x * 50
+                ypos += vector.normalize().y * 50
+            self.stick_spr.position = xpos, ypos, 0
 
     def on_dpad_motion(self, controller, vector):
         """
         Math to draw dpad inputs in their correct location
         """
         assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
-        center_x, center_y = self.layout["stick"]
-        center_x += vector.normalize().x * 50
-        center_y += vector.normalize().y * 50
-        self.stick_spr.position = center_x, center_y, 0
+        xpos, ypos = self.layout["stick"]
+        xpos += vector.normalize().x * 50
+        ypos += vector.normalize().y * 50
+        self.stick_spr.position = xpos, ypos, 0
 
 
 class LeverlessScene(LayoutScene):
@@ -318,20 +318,20 @@ class PadScene(LayoutScene):
         Math to draw stick inputs in their correct location
         """
         assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
-        center_x, center_y = self.layout[stick]
+        xpos, ypos = self.layout[stick]
         if 1 > vector.length() > self.manager.stick_deadzone:
-            center_x += vector.x * 45
-            center_y += vector.y * 45
+            xpos += vector.x * 45
+            ypos += vector.y * 45
         elif vector.length() > self.manager.stick_deadzone:
             # Normalize the vector if its length exceeds 1.0,
             # capping the distance from the center to a max of 45
             # in all directions
-            center_x += vector.normalize().x * 45
-            center_y += vector.normalize().y * 45
+            xpos += vector.normalize().x * 45
+            ypos += vector.normalize().y * 45
         if stick == "leftstick":
-            self.leftstick_spr.position = center_x, center_y, 0
+            self.leftstick_spr.position = xpos, ypos, 0
         else:
-            self.rightstick_spr.position = center_x, center_y, 0
+            self.rightstick_spr.position = xpos, ypos, 0
 
     def on_dpad_motion(self, controller, vector):
         """
@@ -384,9 +384,7 @@ class SceneManager:
     :param config: Configuration
     :type config: dict
     """
-    def __init__(
-            self, window_instance, layout="traditional", config=DEFAULT
-    ):
+    def __init__(self, window_instance, layout="traditional", config=DEFAULT):
         """
         Constructor
         """
@@ -418,7 +416,9 @@ class SceneManager:
                 for k, v in config_parser.items("images"):
                     images_conf[k] = v
             except (KeyError, ParsingError, NoSectionError):
-                _debug_print("Invalid theme/layout.ini. Falling back to default.")
+                _debug_print(
+                    "Invalid theme/layout.ini. Falling back to default."
+                )
 
         # Set up Scene instances:
         self._scenes = {}
