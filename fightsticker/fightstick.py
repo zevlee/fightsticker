@@ -26,6 +26,7 @@ _debug_print("Debugging Active")
 
 # Load the theme from the /theme folder.
 pyglet.resource.path.append(join(CONF, "images"))
+pyglet.resource.path.append(join(APPDIR, "images"))
 pyglet.resource.reindex()
 _debug_print("Theme Loaded")
 
