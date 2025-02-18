@@ -5,30 +5,24 @@ from urllib.request import urlopen
 from configparser import ConfigParser, ParsingError, NoSectionError
 
 import pyglet
-from pyglet.util import debug_print
 from pyglet.math import Mat4, Vec3
 
-from . import APPDIR, CONF, LAYOUTS, DEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT
-from . import LAYOUT_TRADITIONAL as L_TRA
-from . import IMAGES_TRADITIONAL as I_TRA
-from . import LAYOUT_LEVERLESS as L_LEV
-from . import IMAGES_LEVERLESS as I_LEV
-from . import LAYOUT_PAD as L_PAD
-from . import IMAGES_PAD as I_PAD
+from . import *
 from .arg_parser import ArgParser
+from .logger import logger
 
-# Set up the debugging flag calls.
+# Set up the debugging
 parser = ArgParser()
 args = argv[1:]
 option = parser.parse_args(args)
-_debug_print = debug_print(option.DEBUG)
-_debug_print("Debugging Active")
+if option.DEBUG:
+    logger.setLevel("DEBUG")
+logger.debug("Debugging Active")
 
 # Load the theme from the /theme folder.
 pyglet.resource.path.append(join(CONF, "images"))
 pyglet.resource.path.append(join(APPDIR, "images"))
 pyglet.resource.reindex()
-_debug_print("Theme Loaded")
 
 
 class _BaseScene:
@@ -114,7 +108,7 @@ class LayoutScene(_BaseScene):
         """
         Event to show a button when pressed
         """
-        assert _debug_print(f"Pressed Button: {button}")
+        logger.debug(f"Pressed Button: {button}")
         pressed_button = self.button_mapping.get(button, None)
         if pressed_button:
             pressed_button.visible = True
@@ -131,7 +125,7 @@ class LayoutScene(_BaseScene):
         """
         Math to draw trigger inputs or hide them
         """
-        assert _debug_print(f"Pulled Trigger: {trigger}")
+        logger.debug(f"Pulled Trigger: {trigger}")
         if trigger == "lefttrigger":
             if value > self.manager.trigger_deadzone:
                 self.lt_spr.visible = True
@@ -194,7 +188,7 @@ class TraditionalScene(LayoutScene):
         """
         Math to draw stick inputs in their correct location
         """
-        assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
+        logger.debug(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             xpos, ypos = self.layout["stick"]
             if 1 > vector.length() > self.manager.stick_deadzone:
@@ -212,7 +206,7 @@ class TraditionalScene(LayoutScene):
         """
         Math to draw dpad inputs in their correct location
         """
-        assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
+        logger.debug(f"Moved Dpad: {vector.x, vector.y}")
         xpos, ypos = self.layout["stick"]
         xpos += vector.normalize().x * 50
         ypos += vector.normalize().y * 50
@@ -260,7 +254,7 @@ class LeverlessScene(LayoutScene):
         """
         Have the stick inputs alert the main window to draw the sprites
         """
-        assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
+        logger.debug(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             self.up_spr.visible = vector.y > self.manager.stick_deadzone
             self.down_spr.visible = vector.y < -self.manager.stick_deadzone
@@ -271,7 +265,7 @@ class LeverlessScene(LayoutScene):
         """
         Have the dpad hats alert the main window to draw the sprites
         """
-        assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
+        logger.debug(f"Moved Dpad: {vector.x, vector.y}")
         self.up_spr.visible = vector.y > 0
         self.down_spr.visible = vector.y < 0
         self.left_spr.visible = vector.x < 0
@@ -322,7 +316,7 @@ class PadScene(LayoutScene):
         """
         Math to draw stick inputs in their correct location
         """
-        assert _debug_print(f"Moved Stick: {stick}, {vector.x, vector.y}")
+        logger.debug(f"Moved Stick: {stick}, {vector.x, vector.y}")
         xpos, ypos = self.layout[stick]
         if 1 > vector.length() > self.manager.stick_deadzone:
             xpos += vector.x * 45
@@ -342,7 +336,7 @@ class PadScene(LayoutScene):
         """
         Have the dpad hats alert the main window to draw the sprites
         """
-        assert _debug_print(f"Moved Dpad: {vector.x, vector.y}")
+        logger.debug(f"Moved Dpad: {vector.x, vector.y}")
         self.up_spr.visible = vector.y > 0
         self.down_spr.visible = vector.y < 0
         self.left_spr.visible = vector.x < 0
@@ -411,14 +405,14 @@ class SceneManager:
         # Read the layout file
         layout_file = config[layout[:4]]
         if layout == "pad":
-            layout_conf = L_PAD
-            images_conf = I_PAD
+            layout_conf = LAYOUT_PAD
+            images_conf = IMAGES_PAD
         elif layout == "leverless":
-            layout_conf = L_LEV
-            images_conf = I_LEV
+            layout_conf = LAYOUT_LEVERLESS
+            images_conf = IMAGES_LEVERLESS
         else:
-            layout_conf = L_TRA
-            images_conf = I_TRA
+            layout_conf = LAYOUT_TRADITIONAL
+            images_conf = IMAGES_TRADITIONAL
         if config_parser.read(layout_file):
             try:
                 for k, v in config_parser.items("layout"):
@@ -427,7 +421,7 @@ class SceneManager:
                 for k, v in config_parser.items("images"):
                     images_conf[k] = v
             except (KeyError, ParsingError, NoSectionError):
-                _debug_print(
+                logger.debug(
                     "Invalid theme/layout.ini. Falling back to default."
                 )
 
@@ -475,7 +469,7 @@ class SceneManager:
             self.fightstick.push_handlers(self._current_scene)
             self.set_scene("main")
         else:
-            _debug_print(
+            logger.debug(
                 f"A Controller is already connected: {self.fightstick}"
             )
 
@@ -570,7 +564,7 @@ def run(layout, config, parent=None) -> None:
         resizable=True,
         vsync=False
     )
-    _debug_print("Main window created")
+    logger.debug("Layout window created")
     # Close the parent window. We put the window closing here so that
     # the pyglet window inherits the icon of the application
     if parent:
