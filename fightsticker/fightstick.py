@@ -19,7 +19,7 @@ if option.DEBUG:
     logger.setLevel("DEBUG")
 logger.debug("Debugging Active")
 
-# Load the theme from the /theme folder.
+# Load the images directories
 pyglet.resource.path.append(join(CONF, "images"))
 pyglet.resource.path.append(join(APPDIR, "images"))
 pyglet.resource.reindex()
@@ -64,7 +64,7 @@ class LayoutScene(_BaseScene):
         self.fg = pyglet.graphics.Group(1)
         # Initialize the layout
         self._init_layout()
-        # Mapping of (Input names : Sprite names)
+        # Mapping of input names to sprite names
         self.button_mapping = {
             "back": self.select_spr,
             "start": self.start_spr,
@@ -425,7 +425,7 @@ class SceneManager:
                     "Invalid theme/layout.ini. Falling back to default."
                 )
 
-        # Set up Scene instances:
+        # Set up scene instances
         self._scenes = {}
         self._current_scene = None
         if layout == "pad":
@@ -442,12 +442,12 @@ class SceneManager:
             )
         self.add_scene("retry", RetryScene())
 
-        # Instantiation a ControllerManager to handle hot-plugging:
+        # Instantiate a ControllerManager to handle hot-plugging
         self.controller_manager = pyglet.input.ControllerManager()
         self.controller_manager.on_connect = self.on_controller_connect
         self.controller_manager.on_disconnect = self.on_controller_disconnect
 
-        # Set Scene depending on if there is a Controller:
+        # Set scene depending on if there is a controller
         controllers = self.controller_manager.get_controllers()
         if controllers:
             self.on_controller_connect(controllers[0])
@@ -455,7 +455,7 @@ class SceneManager:
         else:
             self.set_scene("retry")
 
-        # Global state for all Scenes:
+        # Global state for all scenes
         self.stick_deadzone = config["stic"]
         self.trigger_deadzone = config["trig"]
 
