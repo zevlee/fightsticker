@@ -86,7 +86,7 @@ class LayoutScene(_BaseScene):
         try:
             image = pyglet.resource.image(self.images[name])
         except KeyError:
-            image = "transparent.png"
+            image = "none.png"
         try:
             position = self.layout[name]
         except KeyError:

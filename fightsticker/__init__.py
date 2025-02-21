@@ -43,9 +43,9 @@ LAYOUT_TRADITIONAL = {
 # Traditional layout images
 IMAGES_TRADITIONAL = {
     "background": "background.png",
-    "select": "transparent.png",
-    "start": "transparent.png",
-    "guide": "transparent.png",
+    "select": "none.png",
+    "start": "none.png",
+    "guide": "none.png",
     "stick": "button.png",
     "x": "button.png",
     "y": "button.png",
@@ -78,9 +78,9 @@ LAYOUT_LEVERLESS = {
 # Leverless layout images
 IMAGES_LEVERLESS = {
     "background": "backgroundlv.png",
-    "select": "transparent.png",
-    "start": "transparent.png",
-    "guide": "transparent.png",
+    "select": "none.png",
+    "start": "none.png",
+    "guide": "none.png",
     "up": "buttonlvlg.png",
     "down": "buttonlv.png",
     "left": "buttonlv.png",
