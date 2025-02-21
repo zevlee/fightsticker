@@ -191,15 +191,13 @@ class TraditionalScene(LayoutScene):
         logger.debug(f"Moved Stick: {stick}, {vector.x, vector.y}")
         if stick == "leftstick":
             xpos, ypos = self.layout["stick"]
-            if 1 > vector.length() > self.manager.stick_deadzone:
-                xpos += vector.x * 50
-                ypos += vector.y * 50
-            elif vector.length() > self.manager.stick_deadzone:
-                # Normalize the vector if its length exceeds 1.0,
-                # capping the distance from the center to a max of 50
-                # in all directions
-                xpos += vector.normalize().x * 50
-                ypos += vector.normalize().y * 50
+            # Normalize the vector if its length exceeds 1.0,
+            # capping the distance from the center to a max of 50
+            # in all directions
+            vec = min(vector, vector.normalize())
+            if vec.length() > self.manager.stick_deadzone:
+                xpos += vec.x * 50
+                ypos += vec.y * 50
             self.stick_spr.position = xpos, ypos, 0
 
     def on_dpad_motion(self, controller, vector):
@@ -318,15 +316,13 @@ class PadScene(LayoutScene):
         """
         logger.debug(f"Moved Stick: {stick}, {vector.x, vector.y}")
         xpos, ypos = self.layout[stick]
-        if 1 > vector.length() > self.manager.stick_deadzone:
-            xpos += vector.x * 45
-            ypos += vector.y * 45
-        elif vector.length() > self.manager.stick_deadzone:
-            # Normalize the vector if its length exceeds 1.0,
-            # capping the distance from the center to a max of 45
-            # in all directions
-            xpos += vector.normalize().x * 45
-            ypos += vector.normalize().y * 45
+        # Normalize the vector if its length exceeds 1.0,
+        # capping the distance from the center to a max of 45
+        # in all directions
+        vec = min(vector, vector.normalize())
+        if vec.length() > self.manager.stick_deadzone:
+            xpos += vec.x * 45
+            ypos += vec.y * 45
         if stick == "leftstick":
             self.leftstick_spr.position = xpos, ypos, 0
         else:
