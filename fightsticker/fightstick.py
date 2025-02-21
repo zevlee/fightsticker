@@ -83,14 +83,8 @@ class LayoutScene(_BaseScene):
         """
         Helper function to make a Sprite
         """
-        try:
-            image = pyglet.resource.image(self.images[name])
-        except KeyError:
-            image = pyglet.resource.image("none.png")
-        try:
-            position = self.layout[name]
-        except KeyError:
-            position = 0, 0
+        image = pyglet.resource.image(self.images.get(name, "none.png"))
+        position = self.layout.get(name, (0, 0))
         sprite = pyglet.sprite.Sprite(
             image, *position, batch=self.batch, group=group
         )
@@ -409,17 +403,18 @@ class SceneManager:
         else:
             layout_conf = LAYOUT_TRADITIONAL
             images_conf = IMAGES_TRADITIONAL
-        if config_parser.read(layout_file):
-            try:
+        try:
+            if config_parser.read(layout_file):
                 for k, v in config_parser.items("layout"):
-                    x, y = v.split(", ")
-                    layout_conf[k] = int(x), int(y)
+                    try:
+                        x, y = v.split(",")
+                        layout_conf[k] = int(x), int(y)
+                    except ValueError:
+                        logger.error(f"Invalid item: {k} = {v}")
                 for k, v in config_parser.items("images"):
                     images_conf[k] = v
-            except (KeyError, ParsingError, NoSectionError):
-                logger.debug(
-                    "Invalid theme/layout.ini. Falling back to default."
-                )
+        except (ParsingError, NoSectionError):
+            logger.error("Invalid config file, falling back to default")
 
         # Set up scene instances
         self._scenes = {}
