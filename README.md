@@ -23,7 +23,7 @@ appear upon being activated.
 
 ## Layouts 
 
-<img src="screenshots/traditional.png" alt="Traditional layout" width="272"/><img src="screenshots/leverless.png" alt="Leverless layout" width="272"/><img src="screenshots/pad.png" alt="Pad layout" width="272"/>
+<img src="screenshots/traditional.png" alt="Traditional layout" width="272" hspace="1"/><img src="screenshots/leverless.png" alt="Leverless layout" width="272" hspace="1"/><img src="screenshots/pad.png" alt="Pad layout" width="272" hspace="1"/>
 
 There are three layouts to choose from: Traditional, Leverless, and Pad. On
 the Traditional and Leverless layouts, both the left stick and the dpad trigger
