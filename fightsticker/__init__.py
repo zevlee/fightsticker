@@ -42,7 +42,7 @@ LAYOUT_TRADITIONAL = {
 }
 # Traditional layout images
 IMAGES_TRADITIONAL = {
-    "background": "background.png",
+    "background": "traditional.png",
     "select": "none.png",
     "start": "none.png",
     "guide": "none.png",
@@ -77,7 +77,7 @@ LAYOUT_LEVERLESS = {
 }
 # Leverless layout images
 IMAGES_LEVERLESS = {
-    "background": "backgroundlv.png",
+    "background": "leverless.png",
     "select": "none.png",
     "start": "none.png",
     "guide": "none.png",
@@ -117,7 +117,7 @@ LAYOUT_PAD = {
 }
 # Pad layout images
 IMAGES_PAD = {
-    "background": "backgroundpd.png",
+    "background": "pad.png",
     "select": "option.png",
     "start": "option.png",
     "guide": "guide.png",
