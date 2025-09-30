@@ -183,7 +183,7 @@ def validate_config(filename, default="RESET"):
         overwrite = True
     # Validate config options
     if not isinstance(config["dark"], int):
-        config[k] = default_config["dark"]
+        config["dark"] = default_config["dark"]
         overwrite = True
     # Overwrite filename if there is an error
     if overwrite:
