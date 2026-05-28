@@ -1,2 +1,2 @@
-platformdirs==4.9.6
+platformdirs==4.10.0
 pyglet==2.1.14
